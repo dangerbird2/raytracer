@@ -62,7 +62,7 @@ void for_each_async(RA_ITOR first,
   auto step_size = len / n_threads;
   step_size = step_size > 0 ? step_size : 1;
 
-  auto futures = vector<future<void>>(n_threads);
+  auto futures = vector<future<bool>>(n_threads);
 
   auto n = 0;
 
@@ -73,11 +73,16 @@ void for_each_async(RA_ITOR first,
 
     auto thread_fn = [](auto a, auto b, auto _fn) {
       for_each(a, b, _fn);
+      return true;
     };
-    futures.push_back(async(launch::async, move(thread_fn), itor, local_last, fn));
+
+    auto fut = async(launch::async | launch::deferred,
+                     thread_fn, itor,
+                     local_last, fn);
+
+    futures.push_back(fut);
     n++;
   }
-
 
   for (auto &i: futures) {
     i.wait();
@@ -94,7 +99,7 @@ decltype(auto) range(T_NUM start, T_NUM end, T_NUM inc = 1)
   auto res = vector<T_NUM>();
   res.reserve(size);
 
-  for (auto i = start; i< end; i+=inc) {
+  for (auto i = start; i < end; i += inc) {
     res.push_back(i);
   }
 

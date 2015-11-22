@@ -144,12 +144,16 @@ vec4 castRay(vec4 p0, vec4 dir)
 /* -------------------------------------------------------------------------- */
 
 auto get_rays = [](auto width, auto height) {
-  auto rays = std::vector<std::vector<vec4>>();
   auto size = width * height;
-  rays.reserve(size);
-  for (auto j = 0; j <)
 
-    return rays;
+  auto rays = std::vector<std::vector<vec4>>(size);
+  for (auto j = 0; j < height; ++j) {
+    for (auto i = 0; i < width; ++i) {
+      rays[j * width + i] = findRay(i, j);
+    }
+  }
+
+  return rays;
 };
 
 void rayTrace()
@@ -166,54 +170,84 @@ void rayTrace()
       vector<uint8_t>(width * height * 4);
 
 
-  auto rays = get_rays(width, height);
-  assert(rays.size() = width * height);
+  struct rt_data {
+    size_t i;
+    size_t j;
+    vector<vec4> rays;
+    vec4 color;
+  };
+  using loop_pair_t = pair<size_t, vector<vec4>>;
 
-  auto col_range = sls::range<size_t>(0, height, 1);
-  sls::for_each_async(
-      col_range.begin(),
-      col_range.end(),
-      [width, height, &buffer](auto j) {
-        struct row_data {
-          size_t i;
-          vector <vec4> rays;
-          uint8_t *color;
-        };
-        using loop_pair_t = pair <size_t, vector<vec4>>;
-        auto row_range = vector<row_data>(width);
-        {
-          auto i = 0;
-          generate(
-              row_range.begin(),
-              row_range.end(),
-              [j, &buffer, i, width, height]() {
-                auto res = row_data();
-                int idx = j * width + i;
+  auto items = vector<rt_data>();
 
-                res.i = size_t(i);
-                res.rays = findRay(i, j, width, height);
-                res.color = &buffer[4 * idx];
-                ++i;
-                return res;
-              });
-        }
+  auto n_threads = 10;
+  auto len = width * height;
+  auto step = len / n_threads;
 
-        auto n_threads = 1;
-        sls::for_each_async(
-            row_range.begin(),
-            row_range.end(),
-            [n_threads, width, height, &buffer]
-                (auto &data) {
-              auto ray_o_dir = data.rays;
+  auto counter = 0;
 
-              vec4 color = castRay(ray_o_dir[0], ray_o_dir[1]);
-              data.color[0] = static_cast<uint8_t>(color.x * 255);
-              data.color[1] = static_cast<uint8_t>(color.y * 255);
-              data.color[2] = static_cast<uint8_t>(color.z * 255);
-              data.color[3] = static_cast<uint8_t>(color.w * 255);
-              ///for (int work = 0; work < 10000; ++work) { }
-            }, n_threads);
-      });
+  auto work_unit = vector<rt_data>();
+  auto work_units = vector<decltype(work_unit)>();
+
+  for (auto i = 0; i < width; ++i) {
+    for (auto j = 0; j < height; ++j) {
+      auto res = rt_data();
+      int idx = j * width + i;
+
+      res.i = size_t(i);
+      res.j = size_t(j);
+      res.rays = findRay(i, j);
+      res.color = vec4(1.0, 0.0, 1.0, 1.0);
+      items.push_back(res);
+
+      work_unit.push_back(res);
+
+      if (work_unit.size() > step) {
+        work_units.push_back(work_unit);
+        work_unit.clear();
+      }
+    };
+  }
+  if (work_unit.size() > 0) {
+    work_units.push_back(work_unit);
+  }
+
+  auto results = vector<future<vector<rt_data>>>();
+
+  cout << "work units size " << work_units.size() << endl;
+  for (auto &unit: work_units) {
+
+    auto work_fn = [](vector<rt_data> generator) {
+      cout << "\twork unit size " << generator.size() << endl;
+
+      for (auto &i: generator) {
+        i.color = vec4(0.0, 0.0, 0.0, 1.0);
+        this_thread::sleep_for(10ns);
+      }
+
+
+      return generator;
+    };
+
+    results.push_back(async(launch::async, move(work_fn), unit));
+
+  }
+
+  for (auto &fut: results) {
+    auto unit = fut.get();
+    for (auto const &data: unit) {
+
+      auto idx = data.j * width + data.i;
+      auto buff = &buffer[idx * 4];
+
+
+      buff[0] = static_cast<uint8_t>(data.color.x * 255);
+      buff[1] = static_cast<uint8_t>(data.color.y * 255);
+      buff[2] = static_cast<uint8_t>(data.color.z * 255);
+      buff[3] = static_cast<uint8_t>(data.color.w * 255);
+    }
+  }
+
 
 
   write_image(out_file_name, &buffer[0], width, height, 4);
