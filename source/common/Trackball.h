@@ -1,3 +1,6 @@
+#ifndef GL_TRACKBALL
+#define GL_TRACKBALL
+
 /*
  * (c) Copyright 1993, 1994, Silicon Graphics, Inc.
  * ALL RIGHTS RESERVED
@@ -103,3 +106,4 @@ void mattrans(float i[4][4]);
 
 
 
+#endif

@@ -14,6 +14,8 @@
 
 # see http://code.google.com/p/gamekit/source/browse/trunk/Dependencies/Source/FreeImage/CMakeLists.txt?r=647
 
+SET(CMAKE_CXX_FLAGS "-Wno-deprecated")
+
 
 set(FREEIMAGE_INCLUDE_DIRECTORIES
 	Source/

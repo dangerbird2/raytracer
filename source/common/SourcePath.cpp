@@ -6,4 +6,4 @@
 
 #include "SourcePath.h"
 
-std::string source_path = "/Users/bsumma/Teaching/graphics/Raytracer";
+std::string source_path = "/Users/Shea/raytracer";
