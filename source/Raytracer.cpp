@@ -10,13 +10,14 @@
 #include "Trackball.h"
 #include "ObjMesh.h"
 
-
 #include "common-math.h"
 
 #include "image-utils.h"
 #include "renderer.h"
 
-#include "threading.h"
+#include "async-tools.h"
+
+#include <utility>
 
 //---------------------------------type aliases---------------------------------------
 using color4 = Angel::vec4;
@@ -142,50 +143,77 @@ vec4 castRay(vec4 p0, vec4 dir)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+auto get_rays = [](auto width, auto height) {
+  auto rays = std::vector<std::vector<vec4>>();
+  auto size = width * height;
+  rays.reserve(size);
+  for (auto j = 0; j <)
 
+    return rays;
+};
 
 void rayTrace()
 {
   using namespace std;
 
+
   auto width = window_width;
   auto height = window_height;
 
   // performance counter
-  auto t_start = chrono::high_resolution_clock::now();
 
   auto buffer =
-      unique_ptr<uint8_t[]>(new uint8_t[width * height * 4]);
+      vector<uint8_t>(width * height * 4);
 
-  for (unsigned int i = 0; i < width; i++) {
 
-    auto range = vector<size_t>(size_t(height));
-    {
-      auto counter = 0;
-      generate(range.begin(), range.end(), [&counter]() {
-        return counter++;
-      });
-    }
+  auto rays = get_rays(width, height);
+  assert(rays.size() = width * height);
 
-    auto loop_fn =
-        [i, width, height, &buffer](auto const &j) {
-          int idx = j * width + i;
-          auto ray_o_dir = findRay(i, j, width, height);
-          vec4 color = castRay(ray_o_dir[0], ray_o_dir[1]);
-          buffer[4 * idx] = static_cast<uint8_t>(color.x * 255);
-          buffer[4 * idx + 1] = static_cast<uint8_t>(color.y * 255);
-          buffer[4 * idx + 2] = static_cast<uint8_t>(color.z * 255);
-          buffer[4 * idx + 3] = static_cast<uint8_t>(color.w * 255);
+  auto col_range = sls::range<size_t>(0, height, 1);
+  sls::for_each_async(
+      col_range.begin(),
+      col_range.end(),
+      [width, height, &buffer](auto j) {
+        struct row_data {
+          size_t i;
+          vector <vec4> rays;
+          uint8_t *color;
         };
+        using loop_pair_t = pair <size_t, vector<vec4>>;
+        auto row_range = vector<row_data>(width);
+        {
+          auto i = 0;
+          generate(
+              row_range.begin(),
+              row_range.end(),
+              [j, &buffer, i, width, height]() {
+                auto res = row_data();
+                int idx = j * width + i;
 
-    sls::for_each_async(range.begin(),
-                        range.end(),
-                        loop_fn);
+                res.i = size_t(i);
+                res.rays = findRay(i, j, width, height);
+                res.color = &buffer[4 * idx];
+                ++i;
+                return res;
+              });
+        }
 
+        auto n_threads = 1;
+        sls::for_each_async(
+            row_range.begin(),
+            row_range.end(),
+            [n_threads, width, height, &buffer]
+                (auto &data) {
+              auto ray_o_dir = data.rays;
 
-  }
-
-  auto t_end = chrono::high_resolution_clock::now();
+              vec4 color = castRay(ray_o_dir[0], ray_o_dir[1]);
+              data.color[0] = static_cast<uint8_t>(color.x * 255);
+              data.color[1] = static_cast<uint8_t>(color.y * 255);
+              data.color[2] = static_cast<uint8_t>(color.z * 255);
+              data.color[3] = static_cast<uint8_t>(color.w * 255);
+              ///for (int work = 0; work < 10000; ++work) { }
+            }, n_threads);
+      });
 
 
   write_image(out_file_name, &buffer[0], width, height, 4);
