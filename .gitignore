@@ -82,4 +82,6 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
+build/
+
 # Created by .ignore support plugin (hsz.mobi)

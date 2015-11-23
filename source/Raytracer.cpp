@@ -17,7 +17,7 @@
 
 #include "async-tools.h"
 
-#include <utility>
+#include <functional>
 
 //---------------------------------type aliases---------------------------------------
 using color4 = Angel::vec4;
@@ -65,7 +65,10 @@ static float scalefactor;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-std::vector<vec4> findRay(GLdouble x, GLdouble y, int width = window_width, int height = window_width)
+std::pair<vec4, vec4> findRay(GLdouble x,
+                              GLdouble y,
+                              int width,
+                              int height)
 {
 
   y = height - y;
@@ -101,10 +104,7 @@ std::vector<vec4> findRay(GLdouble x, GLdouble y, int width = window_width, int 
   temp = normalize(temp);
   vec4 ray_dir = vec4(temp.x, temp.y, temp.z, 0.0);
 
-  std::vector<vec4> result(2);
-  result[0] = ray_origin;
-  result[1] = ray_dir;
-  return result;
+  return std::make_pair(ray_origin, ray_dir);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,7 +123,7 @@ void castRayDebug(vec4 p0, vec4 dir)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-vec4 castRay(vec4 p0, vec4 dir)
+vec4 castRay(vec4 p0, vec4 dir, size_t depth=0, size_t max_depth =1)
 {
   //castRayDebug(p0, dir);
   auto color = vec4();
@@ -143,22 +143,12 @@ vec4 castRay(vec4 p0, vec4 dir)
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-auto get_rays = [](auto width, auto height) {
-  auto size = width * height;
-
-  auto rays = std::vector<std::vector<vec4>>(size);
-  for (auto j = 0; j < height; ++j) {
-    for (auto i = 0; i < width; ++i) {
-      rays[j * width + i] = findRay(i, j);
-    }
-  }
-
-  return rays;
-};
 
 void rayTrace()
 {
   using namespace std;
+
+  using namespace sls;
 
 
   auto width = window_width;
@@ -167,20 +157,15 @@ void rayTrace()
   // performance counter
 
   auto buffer =
-      vector<uint8_t>(width * height * 4);
+  vector<uint8_t>(width * height * 4);
 
 
-  struct rt_data {
-    size_t i;
-    size_t j;
-    vector<vec4> rays;
-    vec4 color;
-  };
+
+
   using loop_pair_t = pair<size_t, vector<vec4>>;
 
-  auto items = vector<rt_data>();
 
-  auto n_threads = 10;
+  auto n_threads = 20;
   auto len = width * height;
   auto step = len / n_threads;
 
@@ -196,9 +181,9 @@ void rayTrace()
 
       res.i = size_t(i);
       res.j = size_t(j);
-      res.rays = findRay(i, j);
+      res.rays = findRay(i, j, width, height);
       res.color = vec4(1.0, 0.0, 1.0, 1.0);
-      items.push_back(res);
+
 
       work_unit.push_back(res);
 
@@ -217,19 +202,12 @@ void rayTrace()
   cout << "work units size " << work_units.size() << endl;
   for (auto &unit: work_units) {
 
-    auto work_fn = [](vector<rt_data> generator) {
-      cout << "\twork unit size " << generator.size() << endl;
 
-      for (auto &i: generator) {
-        i.color = vec4(0.0, 0.0, 0.0, 1.0);
-        this_thread::sleep_for(10ns);
-      }
-
-
-      return generator;
-    };
-
-    results.push_back(async(launch::async, move(work_fn), unit));
+    results.push_back(
+        raycast_async([](auto &i) {
+          i.color = castRay(i.rays.first, i.rays.second);
+          return i;
+        }, unit));
 
   }
 
@@ -247,7 +225,6 @@ void rayTrace()
       buff[3] = static_cast<uint8_t>(data.color.w * 255);
     }
   }
-
 
 
   write_image(out_file_name, &buffer[0], width, height, 4);
@@ -406,8 +383,8 @@ void mouse(GLint button, GLint state, GLint x, GLint y)
   if (state == GLUT_UP) {
     moving = scaling = panning = 0;
     std::cout << x << "\t\t" << y << "\n";
-    std::vector<vec4> ray = findRay(x, y, 0, 0);
-    castRayDebug(ray[0], ray[1]);
+    auto ray = findRay(x, y, 0, 0);
+    castRayDebug(ray.first, ray.second);
     glutPostRedisplay();
     return;
   }

@@ -11,6 +11,7 @@
 #include <chrono>
 #include <future>
 #include <vector>
+#include <set>
 
 /**
  * @brief simple function timer routine
@@ -39,57 +40,6 @@ auto timeit(FN_T function, ARGS_T ...args) -> decltype(auto)
   return t_end - t_start;
 };
 
-/**
- * @brief Performs a parallel for_each on a random
- * access itorator
- */
-template<typename RA_ITOR, typename UNARY_FN>
-void for_each_async(RA_ITOR first,
-                    RA_ITOR last,
-                    UNARY_FN fn,
-                    size_t n_threads = 10)
-{
-
-  using namespace std;
-
-  if (n_threads < 2) {
-    for_each(first, last, fn);
-    return;
-  }
-
-  auto len = last - first;
-
-  auto step_size = len / n_threads;
-  step_size = step_size > 0 ? step_size : 1;
-
-  auto futures = vector<future<bool>>(n_threads);
-
-  auto n = 0;
-
-  for (auto itor = first; itor < last; itor += step_size) {
-    auto local_last = last - itor <= step_size ?
-                      last :
-                      itor + step_size;
-
-    auto thread_fn = [](auto a, auto b, auto _fn) {
-      for_each(a, b, _fn);
-      return true;
-    };
-
-    auto fut = async(launch::async | launch::deferred,
-                     thread_fn, itor,
-                     local_last, fn);
-
-    futures.push_back(fut);
-    n++;
-  }
-
-  for (auto &i: futures) {
-    i.wait();
-  }
-  //cout << n << " threads executed\n";
-
-};
 
 template<typename T_NUM>
 decltype(auto) range(T_NUM start, T_NUM end, T_NUM inc = 1)
@@ -104,6 +54,39 @@ decltype(auto) range(T_NUM start, T_NUM end, T_NUM inc = 1)
   }
 
   return res;
+
+}
+
+
+struct rt_data {
+  size_t i;
+  size_t j;
+  std::pair<vec4, vec4> rays;
+  vec4 color;
+};
+
+template<typename FN_T>
+std::future<std::vector<rt_data>>
+raycast_async(FN_T fn, std::vector<rt_data> const &work)
+{
+  using namespace std;
+
+  auto threads_used = set<__thread_id>();
+
+  auto work_fn = [&fn](vector<rt_data> generator) {
+    cout << "\twork unit size " << generator.size() << "\n";
+
+
+    for (auto &i: generator) {
+      i = fn(i);
+    }
+
+    return generator;
+  };
+
+
+
+  return async(launch::async, move(work_fn), work);
 
 }
 
