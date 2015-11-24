@@ -430,8 +430,9 @@ void motion(GLint x, GLint y)
     glutPostRedisplay();
     return;
   } else if (moving) {
-    trackball(lastquat, (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
-              (2.0f * x - W) / W, (H - 2.0f * y) / H);
+    trackball(lastquat, 
+             (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
+             (2.0f * x - W) / W,      (H - 2.0f * y) / H);
 
     add_quats(lastquat, curquat, curquat);
     build_rotmatrix(curmat, curquat);
