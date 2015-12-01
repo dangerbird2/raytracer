@@ -6,4 +6,4 @@
 
 #include "SourcePath.h"
 
-std::string source_path = "@MY_SOURCE_PATH@";
+std::string source_path = "@MY_SOURCE_PATH@/";

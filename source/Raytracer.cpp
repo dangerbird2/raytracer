@@ -45,6 +45,10 @@ GLuint ModelViewEarth, ModelViewLight, NormalMatrix, Projection;
 mat4 projection;
 mat4 model_view;
 
+//---------------------------------raytracer scene----------------------------------
+
+sls::Scene scene;
+
 
 //==========Trackball Variables==========
 static float curquat[4], lastquat[4];
@@ -65,13 +69,13 @@ static float scalefactor;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-std::pair<vec4, vec4> findRay(GLdouble x,
-                              GLdouble y,
-                              int width,
-                              int height)
+sls::Ray findRay(GLdouble x,
+                 GLdouble y,
+                 int width,
+                 int height)
 {
 
-  y = height - y;
+  y = window_height - y;
 
   GLdouble modelViewMatrix[16];
   GLdouble projectionMatrix[16];
@@ -86,55 +90,65 @@ std::pair<vec4, vec4> findRay(GLdouble x,
     }
   }
 
+
   GLdouble nearPlaneLocation[3];
-  gluUnProject(x, y, 0.0, modelViewMatrix, projectionMatrix, viewport,
-               &nearPlaneLocation[0], &nearPlaneLocation[1],
+  gluUnProject(x, y, 0.0, modelViewMatrix, projectionMatrix,
+               viewport, &nearPlaneLocation[0], &nearPlaneLocation[1],
                &nearPlaneLocation[2]);
 
   GLdouble farPlaneLocation[3];
-  gluUnProject(x, y, 1.0, modelViewMatrix, projectionMatrix, viewport,
-               &farPlaneLocation[0], &farPlaneLocation[1],
+  gluUnProject(x, y, 1.0, modelViewMatrix, projectionMatrix,
+               viewport, &farPlaneLocation[0], &farPlaneLocation[1],
                &farPlaneLocation[2]);
 
-  vec4 ray_origin = vec4(nearPlaneLocation[0], nearPlaneLocation[1],
-                         nearPlaneLocation[2], 1.0);
+  vec4 ray_origin = vec4(nearPlaneLocation[0], nearPlaneLocation[1], nearPlaneLocation[2], 1.0);
   vec3 temp = vec3(farPlaneLocation[0] - nearPlaneLocation[0],
                    farPlaneLocation[1] - nearPlaneLocation[1],
                    farPlaneLocation[2] - nearPlaneLocation[2]);
   temp = normalize(temp);
   vec4 ray_dir = vec4(temp.x, temp.y, temp.z, 0.0);
 
-  return std::make_pair(ray_origin, ray_dir);
+  std::vector<vec4> result(2);
+
+  return sls::Ray{ray_origin, ray_dir};
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 void castRayDebug(vec4 p0, vec4 dir)
 {
-  double t = raySphereIntersection(p0, dir);
+  double t = raySphereIntersection(p0, dir, 0, (Angel::vec4(0)));
 
   if (t > 0) {
     vec4 temp = p0 + t * dir;
     vec3 temp_3 = vec3(temp.x, temp.y, temp.z);
     std::cout << p0 + t * dir << "\t\t" << length(temp_3) << "\n";
+  } else {
+    std::cout << t << "\n";
   }
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-vec4 castRay(vec4 p0, vec4 dir, size_t depth=0, size_t max_depth =1)
+vec4 castRay(vec4 p0, vec4 dir, size_t depth = 0, size_t max_depth = 1)
 {
   //castRayDebug(p0, dir);
   auto color = vec4();
+  auto obj = scene.objects[0];
 
-  double t = raySphereIntersection(p0, dir);
+  double t = raySphereIntersection(p0, dir, 0, (Angel::vec4(0)));
 
-  if (t < 0) {
-    color = vec4(0.0, 0.0, 0.0, 1.0);
+  auto clear_color = vec4(0.0, 0.0, 0.0, 0.0);
+  if (t < 1) {
+    color = clear_color;
   } else {
     auto temp = p0 + t * dir;
-    color = vec4(fabs(temp.z), 0.0, 0.0, 1.0);
+    color = vec4(fabs(temp.x), fabs(temp.y), fabs(temp.z), 1.0);
+  }
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto work = sqrt(10 * 50 + log(40));
   }
 
   return color;
@@ -157,15 +171,12 @@ void rayTrace()
   // performance counter
 
   auto buffer =
-  vector<uint8_t>(width * height * 4);
-
-
-
+      vector<uint8_t>(width * height * 4);
 
   using loop_pair_t = pair<size_t, vector<vec4>>;
 
 
-  auto n_threads = 20;
+  auto n_threads = 10;
   auto len = width * height;
   auto step = len / n_threads;
 
@@ -181,8 +192,8 @@ void rayTrace()
 
       res.i = size_t(i);
       res.j = size_t(j);
-      res.rays = findRay(i, j, width, height);
-      res.color = vec4(1.0, 0.0, 1.0, 1.0);
+      res.ray = findRay(i, j, width, height);
+      res.color = castRay(res.ray.start, res.ray.dir);
 
 
       work_unit.push_back(res);
@@ -205,10 +216,10 @@ void rayTrace()
 
     results.push_back(
         raycast_async([](auto &i) {
-          i.color = castRay(i.rays.first, i.rays.second);
+
+          i.color = castRay(i.ray.start, i.ray.dir);
           return i;
         }, unit));
-
   }
 
   for (auto &fut: results) {
@@ -236,11 +247,13 @@ void rayTrace()
 void init()
 {
   mesh.makeSubdivisionSphere(8);
+  //mesh.loadOBJ((source_path + "stanford_dragon/drag.obj").c_str());
 
   // Create a vertex array object
   GLuint vao;
   glGenVertexArraysAPPLE(1, &vao);
   glBindVertexArrayAPPLE(vao);
+
 
   // Create and initialize a buffer object
   glGenBuffers(1, &buffer_object);
@@ -276,21 +289,23 @@ void init()
   vTexCoord = glGetAttribLocation(program, "vTexCoord");
   glEnableVertexAttribArray(vTexCoord);
 
+  scene = sls::setup_scene();
+
+
   // Initialize shader lighting parameters
-  point4 light_position(0.0, 0.0, 10.0, 1.0);
+  auto light_position = scene.light_locations[0];
 
-  color4 light_ambient(1.0, 1.0, 1.0, 1.0);
-  color4 light_diffuse(1.0, 1.0, 1.0, 1.0);
-  color4 light_specular(1.0, 1.0, 1.0, 1.0);
+  auto light_color = scene.ambient_colors[0];
 
-  color4 material_ambient(0.0, 0.0, 0.0, 1.0);
-  color4 material_diffuse(1.0, 0.8, 0.0, 1.0);
-  color4 material_specular(0.0, 0.0, 0.0, 1.0);
-  float material_shininess = 1;
+  color4 material_ambient(0.0, 0.0, 0.0, 0.0);
+  color4 material_diffuse(1.0, 0.8, 0.8, 0.2);
+  color4 material_specular(1.0, 1.0, 1.0, 0.2);
 
-  color4 ambient_product = light_ambient * material_ambient;
-  color4 diffuse_product = light_diffuse * material_diffuse;
-  color4 specular_product = light_specular * material_specular;
+  float material_shininess = 100;
+
+  color4 ambient_product = light_color * material_ambient;
+  color4 diffuse_product = light_color * material_diffuse;
+  color4 specular_product = light_color * material_specular;
 
   glUniform4fv(glGetUniformLocation(program, "AmbientProduct"), 1,
                ambient_product);
@@ -314,6 +329,9 @@ void init()
   glEnable(GL_DEPTH_TEST);
 
   glShadeModel(GL_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
   glClearColor(0.8, 0.8, 1.0, 1.0);
 
@@ -331,7 +349,11 @@ void init()
 
   scalefactor = 1.0;
   render_line = false;
+
+
 }
+
+
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -379,12 +401,16 @@ void display(void)
 /* -------------------------------------------------------------------------- */
 void mouse(GLint button, GLint state, GLint x, GLint y)
 {
-
+  using namespace std;
   if (state == GLUT_UP) {
     moving = scaling = panning = 0;
-    std::cout << x << "\t\t" << y << "\n";
+
     auto ray = findRay(x, y, 0, 0);
-    castRayDebug(ray.first, ray.second);
+
+    cout << x << "\t\t" << y << "\n";
+    cout << "first " << ray.start << "\t\t" << ray.dir << "\n\n";
+
+    castRayDebug(ray.start, ray.dir);
     glutPostRedisplay();
     return;
   }
@@ -430,9 +456,9 @@ void motion(GLint x, GLint y)
     glutPostRedisplay();
     return;
   } else if (moving) {
-    trackball(lastquat, 
-             (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
-             (2.0f * x - W) / W,      (H - 2.0f * y) / H);
+    trackball(lastquat,
+              (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
+              (2.0f * x - W) / W, (H - 2.0f * y) / H);
 
     add_quats(lastquat, curquat, curquat);
     build_rotmatrix(curmat, curquat);
