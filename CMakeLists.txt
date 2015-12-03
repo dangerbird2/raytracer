@@ -9,10 +9,10 @@ find_package(OpenGL)
 find_package(GLUT)
 
 INCLUDE_DIRECTORIES(./source
-					./source/common
-					./shaders
-					${OPENGL_INCLUDE_DIR} 
-					${GLUT_INCLUDE_DIR})
+                    ./source/common
+                    ./shaders
+                    ${OPENGL_INCLUDE_DIR} 
+                    ${GLUT_INCLUDE_DIR})
 					
 					
 
