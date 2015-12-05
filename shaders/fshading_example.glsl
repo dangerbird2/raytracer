@@ -8,12 +8,9 @@ varying vec3 pos;
 varying vec3 N;
 varying vec2 texCoord;
 
-
 void main()
 {
-  //if (DiffuseProduct.a == 0.0) {discard;}
-
-  vec4 texel = vec4(1.0, 1.0, 1.0, 1.0);
+  
   vec3 L;
   if(LightPosition.w == 0.0){
     L = normalize(normalize(LightPosition.xyz)- pos);
@@ -29,7 +26,7 @@ void main()
   vec4 ambient = AmbientProduct;
   
   float Kd = max( dot(N, L), 0.0 );
-  vec4  diffuse = Kd*DiffuseProduct * texel;
+  vec4  diffuse = Kd*DiffuseProduct;
   
   float Ks = pow(max(dot(R,E),0.0),Shininess);
   vec4  specular = Ks * SpecularProduct;
@@ -41,10 +38,7 @@ void main()
   
   gl_FragColor = ambient + diffuse + specular;
   gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-
   gl_FragColor.a = 1.0;
-
-
   
 }
 

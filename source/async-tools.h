@@ -61,7 +61,7 @@ decltype(auto) range(T_NUM start, T_NUM end, T_NUM inc = 1)
 struct rt_data {
   size_t i;
   size_t j;
-  sls::Ray ray;
+  std::pair<vec4, vec4> rays;
   vec4 color;
 };
 
@@ -71,6 +71,8 @@ raycast_async(FN_T fn, std::vector<rt_data> const &work)
 {
   using namespace std;
 
+  auto threads_used = set<__thread_id>();
+
   auto work_fn = [&fn](vector<rt_data> generator) {
     cout << "\twork unit size " << generator.size() << "\n";
 
@@ -78,8 +80,11 @@ raycast_async(FN_T fn, std::vector<rt_data> const &work)
     for (auto &i: generator) {
       i = fn(i);
     }
+
     return generator;
   };
+
+
 
   return async(launch::async, move(work_fn), work);
 

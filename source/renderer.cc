@@ -6,16 +6,9 @@
  * 
  **/
 #include "renderer.h"
+#include "scene.h"
 
-namespace sls {
-
-Material Material::default_mtl()
-{
-  auto mat = Material();
-
-  return mat;
-}
-
+namespace  sls {
 CommandLineArgs parse_args(int argc, char const **argv)
 {
   using namespace std;
@@ -24,7 +17,7 @@ CommandLineArgs parse_args(int argc, char const **argv)
 
   args.argv.reserve(size_t(argc));
 
-  for (auto i = 0lu; i < argc; ++i) {
+  for (auto i=0lu; i<argc; ++i) {
     if (argv[i][0] != '\0') {
       args.argv.push_back(string(argv[i]));
     }
@@ -34,71 +27,46 @@ CommandLineArgs parse_args(int argc, char const **argv)
 }
 
 
-Scene setup_scene()
+bool shadow_ray_unblocked(sls::Scene const &scene,
+                          std::shared_ptr<sls::SceneObject> obj_a,
+                          vec4 const &light_pos,
+                          vec4 const &normal,
+                          vec4 const &intersect_point)
 {
-  using namespace Angel;
-  using namespace std;
-  auto scene = Scene();
-
-
-  scene.ambient_colors.push_back(vec4(1.f, 0.9f, 0.9f));
-  scene.diffuse_colors.push_back(vec4(1.f, 0.9f, 0.9f));
-  scene.specular_colors.push_back(vec4(1.f, 0.9f, 0.9f));
-  scene.light_locations.push_back(vec4(1.0, 1.0, 10.0, 1.0));
-
-
-  scene.objects.push_back(move(unit_sphere(1.0)));
-
-  return scene;
-}
-
-SceneObject unit_sphere(double radius)
-{
-  auto sphere = SceneObject();
-  auto origin = vec4(0.0, 0.0, 0.0, 1.0);
-  sphere.intersector = [radius, origin](Ray ray) {
-
-    auto t = raySphereIntersection(ray.start, ray.dir, radius, origin);
-    auto inter = RayIntersection();
-    inter.does_intersect = t > 0;
-    inter.ray = ray;
-    inter._t = t;
-
-    return inter;
-  };
-
-  sphere.model_view = Angel::mat4();
-
-  return sphere;
-}
-}
-
-double raySphereIntersection(vec4 p0, vec4 V,
-                             double radius,
-                             vec4 origin)
-{
-  auto inter = sls::RayIntersection{};
-  double t = -1.0;
-  double a = dot(V, V);
-  double b = dot(2 * V, p0 - origin);
-  double c = (length(p0 - origin) * length(p0 - origin)) - (radius * radius);
-
-
-  double temp = b * b - (4 * a * c);
-  inter.does_intersect = temp <= 0.0;
-
-  if (inter.does_intersect) { return temp; }
-
-
-  if (nearlyEqual(temp, 0.0, 1e-7)) {
-    return (-b) / (2 * a);
+  for (auto const &obj_b: scene.objects) {
+    if (obj_b != obj_a) {
+      // TODO check for shadows.
+      auto shadow_ray = Ray{intersect_point, normalize(light_pos - intersect_point)};
+    }
   }
+  return true;
+}
 
+vec3 reflected_ray(sls::Scene scene,
+                   Angel::vec4 const &vec4,
+                   Angel::vec4 const &normal,
+                   Angel::vec4 const &intersect_pt)
+{
+  return vec3(0.0, 0.0, 0.0);
+}
 
-  double t1 = (-b + sqrt(temp)) / (2 * a);
-  double t2 = (-b - sqrt(temp)) / (2 * a);
-  assert(!isnan(t1) && !isnan(t2));
-  return (t1 < t2) ? t1 : t2;
+/*
+auto imgui_setup() -> ImGuiIO
+{
+
+  auto io = ImGui::GetIO();
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  io.DisplaySize = ImVec2(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+#pragma GCC diagnostic pop
+  uint8_t *pixels;
+  int width, height;
+  io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+
+  return io;
+}
+ */
 }
 
 

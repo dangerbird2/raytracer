@@ -13,24 +13,19 @@
 #include <map>
 #include <assert.h>
 #include "types.h"
+#include "scene.h"
 
 
 namespace sls {
 
 
 
-Scene setup_scene();
 CommandLineArgs parse_args(int argc, char const **argv);
 
-
-SceneObject unit_sphere(double radius = 0.0);
+SceneObject unit_sphere(double radius=1.0);
 
 
 }
-
-double raySphereIntersection(vec4 p0, vec4 V,
-                             double radius = 1.0,
-                             vec4 origin = vec4(0.0, 0.0, 0.0, 1.0));
 
 
 
