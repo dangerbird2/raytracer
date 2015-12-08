@@ -61,7 +61,7 @@ decltype(auto) range(T_NUM start, T_NUM end, T_NUM inc = 1)
 struct rt_data {
   size_t i;
   size_t j;
-  std::pair<vec4, vec4> rays;
+  sls::Ray rays;
   vec4 color;
 };
 

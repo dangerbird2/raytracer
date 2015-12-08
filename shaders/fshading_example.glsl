@@ -18,10 +18,9 @@ void main()
     L = normalize( (ModelViewLight*LightPosition).xyz - pos );
   }
   
-  vec3 E = normalize( -pos );
+  vec3 E = normalize(-pos);
   vec3 R = normalize(-reflect(L,N));
-  
-  
+
   // Compute terms in the illumination equation
   vec4 ambient = AmbientProduct;
   

@@ -26,57 +26,61 @@ struct SceneObject {
 public:
 
 
-  SceneObject() { }
+
+  SceneObject(Material const &mtl = Material(), Angel::mat4 const &model_view = Angel::mat4())
+      : material(mtl) {
+    set_modelview(model_view);
+  }
 
   SceneObject(SceneObject const &cpy) :
-      model_view(cpy.model_view),
-      material(cpy.material){ }
+      SceneObject(cpy.material, cpy.modelview) {  }
 
   virtual
   ~SceneObject() { }
 
   Material material;
-  virtual double intersect (Ray ray)  = 0;
+
+  virtual double intersect(Ray ray) = 0;
 
 
-  mat4 const &get_model_view() const
-  {
-    return model_view;
-  }
+  mat4 const &get_modelview() const;
 
-  void set_model_view(mat4 const &model_view)
-  {
-    this->model_view = model_view;
-    model_view_inverse = invert(model_view);
-    normal_view = transpose(model_view_inverse);
-  }
+  void set_modelview(mat4 const &model_view);
 
 
-  mat4 const &get_model_view_inverse() const
-  {
-    return model_view_inverse;
-  }
+  mat4 const &get_modelview_inverse() const;
 
-  mat4 const &get_normal_view() const
-  {
-    return normal_view;
-  }
+  mat4 const &get_normalview() const;
 
 private:
-  Angel::mat4 model_view;
-  Angel::mat4 model_view_inverse;
-  Angel::mat4 normal_view;
+  Angel::mat4 modelview;
+  Angel::mat4 modelview_inverse;
+  Angel::mat4 normalview;
 
+};
+
+struct LightColor {
+  Angel::vec4 ambient_color = vec4(1.0, 1.0, 1.0, 1.0);
+  Angel::vec4 diffuse_color = vec4(0.01, 0.01, 0.01, 1.0);
+  Angel::vec4 specular_color = vec4(1.0, 1.0, 1.0, 1.0);
 };
 
 
 struct Scene {
-  std::vector<Angel::vec4> ambient_colors;
-  std::vector<Angel::vec4> diffuse_colors;
-  std::vector<Angel::vec4> specular_colors;
+
+  Angel::mat4 camera_modelview;
+
+  std::vector<LightColor> light_colors;
   std::vector<Angel::vec4> light_locations;
 
   std::vector<std::shared_ptr<SceneObject>> objects;
+};
+
+struct UnitSphere: public SceneObject {
+
+  UnitSphere(Material const &mtl, Angel::mat4 modelview = Angel::mat4()): SceneObject(mtl, modelview){}
+  double radius = 1;
+  virtual double intersect(Ray ray) override;
 };
 
 }

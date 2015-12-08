@@ -23,8 +23,8 @@ struct Ray final {
 
   //-----------------------------ctors/dtors-------------------------------------
   Ray(Angel::vec4 start = Angel::vec4(0.0, 0.0, 0.0, 1.0),
-      Angel::vec4 dir = Angel::vec4(0.0, 0.0, 1.0, 0.0)):
-      start(start), dir(dir) {}
+      Angel::vec4 dir = Angel::vec4(0.0, 0.0, 1.0, 0.0)) :
+      start(start), dir(dir) { }
 
   // non-virtual destructor
   ~Ray() { }
@@ -62,7 +62,7 @@ public:
   /**
    * brief specular phong exponent (shininess)
    */
-  float k_n = 1.0;
+  float shininess = 1.0;
 
 
   /**

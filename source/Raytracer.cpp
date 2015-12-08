@@ -17,7 +17,15 @@
 
 #include "async-tools.h"
 
+#include <string>
 #include <functional>
+
+void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec4 const &material_specular,
+                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular,
+                 vec4 const &light_position);
+vec4 castRay(vec4 p0, vec4 dir, size_t depth = 0, size_t max_depth = 1);
+
+
 
 //---------------------------------type aliases---------------------------------------
 using color4 = Angel::vec4;
@@ -47,6 +55,15 @@ mat4 model_view;
 
 static auto scene = sls::Scene();
 
+struct LightUnifs {
+  GLuint diffuse_prod;
+  GLuint ambient_prod;
+  GLuint specular_prod;
+
+  GLuint light_pos;
+
+  GLuint shininess;
+} light_unifs;
 
 //==========Trackball Variables==========
 static float curquat[4], lastquat[4];
@@ -67,10 +84,10 @@ static float scalefactor;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-std::pair<vec4, vec4> findRay(GLdouble x,
-                              GLdouble y,
-                              int width,
-                              int height)
+sls::Ray findRay(GLdouble x,
+                 GLdouble y,
+                 int width,
+                 int height)
 {
 
   y = height - y;
@@ -88,44 +105,50 @@ std::pair<vec4, vec4> findRay(GLdouble x,
     }
   }
 
+
   GLdouble nearPlaneLocation[3];
-  gluUnProject(x, y, 0.0, modelViewMatrix, projectionMatrix, viewport,
-               &nearPlaneLocation[0], &nearPlaneLocation[1],
+  gluUnProject(x, y, 0.0, modelViewMatrix, projectionMatrix,
+               viewport, &nearPlaneLocation[0], &nearPlaneLocation[1],
                &nearPlaneLocation[2]);
 
   GLdouble farPlaneLocation[3];
-  gluUnProject(x, y, 1.0, modelViewMatrix, projectionMatrix, viewport,
-               &farPlaneLocation[0], &farPlaneLocation[1],
+  gluUnProject(x, y, 1.0, modelViewMatrix, projectionMatrix,
+               viewport, &farPlaneLocation[0], &farPlaneLocation[1],
                &farPlaneLocation[2]);
 
-  vec4 ray_origin = vec4(nearPlaneLocation[0], nearPlaneLocation[1],
-                         nearPlaneLocation[2], 1.0);
+  vec4 ray_origin = vec4(nearPlaneLocation[0], nearPlaneLocation[1], nearPlaneLocation[2], 1.0);
   vec3 temp = vec3(farPlaneLocation[0] - nearPlaneLocation[0],
                    farPlaneLocation[1] - nearPlaneLocation[1],
                    farPlaneLocation[2] - nearPlaneLocation[2]);
   temp = normalize(temp);
   vec4 ray_dir = vec4(temp.x, temp.y, temp.z, 0.0);
 
-  return std::make_pair(ray_origin, ray_dir);
+
+  return sls::Ray(ray_origin, ray_dir);
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 void castRayDebug(vec4 p0, vec4 dir)
 {
-  double t = raySphereIntersection(p0, dir);
+  for (auto i: scene.objects) {
+    double t = i->intersect(sls::Ray{p0, dir});
 
-  if (t > 0) {
-    vec4 temp = p0 + t * dir;
-    vec3 temp_3 = vec3(temp.x, temp.y, temp.z);
-    std::cout << p0 + t * dir << "\t\t" << length(temp_3) << "\n";
+    if (t > 0) {
+      auto color = castRay(p0, dir);
+      vec4 temp = p0 + t * dir;
+      vec3 temp_3 = vec3(temp.x, temp.y, temp.z);
+      std::cout << p0 + t * dir << "\t\t" << length(temp_3) << "\n"
+          << "color: " << color << '\n';
+
+    }
   }
+
 }
 
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 
-vec4 castRay(vec4 p0, vec4 dir, size_t depth=0, size_t max_depth =1)
+vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth)
 {
 
   //castRayDebug(p0, dir);
@@ -151,16 +174,7 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth=0, size_t max_depth =1)
       auto hit_objectspace = obj->get_modelview_inverse() * hit_viewspace;
 
       auto normal = normalize(hit_objectspace);
-      auto temp = normal;
-      obj_color = vec4();
-
-      // TODO iterate through every light in scene
-      auto lpos = scene.light_locations[0];
-      auto lcol = scene.light_colors[0];
-
       auto spec = vec3();
-      auto diff = vec3();
-      auto amb = vec3();
       auto transmitted = vec3();
 
       auto const &mtl = obj->material;
@@ -179,57 +193,17 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth=0, size_t max_depth =1)
         transmitted = vec3(0, 0, 0);
       }
 
-      if (0) { // TODO test for backface culling
-        obj_color = vec3(0, 0, 0);
-      } else { // simple local reflectance
-        auto const n_lights = std::min(scene.light_locations.size(), scene.light_colors.size());
-        assert(n_lights >= 0);
-
-        auto ambient = vec4(0.01, 0.01, 0.1, 1.0);
-        ambient = mtl.k_ambient * ambient;
-
-        for (auto i = 0; i < n_lights; ++i) {
-          auto l_pos = scene.light_locations[i];
-
-          if (l_pos.w == 0) {
-            l_pos = normalize(normalize(l_pos)- hit_viewspace);
-
-          } else {
-            l_pos = normalize(l_pos - hit_viewspace);
-          }
-
-          auto const &l_color = scene.light_colors[i];
-          auto const unblocked =
-              shadow_ray_unblocked(scene,
-                                   obj,
-                                   l_pos,
-                                   normal,
-                                   hit_viewspace);
-          if (unblocked) {
-
-            auto kd = std::max(float(dot(normal, l_pos)), 0.f);
-            auto diffuse = scene.light_colors[i] * mtl.color * mtl.k_diffuse * kd;
-            auto specular = spec + sls::reflected_ray(scene, l_pos, normal, hit_viewspace);
-            obj_color = diffuse;
-
-          }
-        }
-
-        obj_color.w = obj->material.color.w;
-        color += obj_color;
-
-      }
-
+      color += sls::shade_ray_intersection(scene, obj, hit_viewspace, normal);
 
     }
+
+
   }
-
-
-
-
-
   return sls::clamp(color, 0.0, 1.0);
 }
+
+
+
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -248,7 +222,7 @@ void rayTrace()
   // performance counter
 
   auto buffer =
-  vector<uint8_t>(width * height * 4);
+      vector<uint8_t>(width * height * 4);
 
 
 
@@ -296,7 +270,7 @@ void rayTrace()
 
     results.push_back(
         raycast_async([](auto &i) {
-          i.color = castRay(i.rays.first, i.rays.second);
+          i.color = castRay(i.rays.start, i.rays.dir);
           return i;
         }, unit));
 
@@ -326,7 +300,8 @@ void rayTrace()
 /* -------------------------------------------------------------------------- */
 void init()
 {
-  mesh.makeSubdivisionSphere(8);
+  mesh.makeSubdivisionSphere(5);
+
 
   // Create a vertex array object
   GLuint vao;
@@ -376,22 +351,22 @@ void init()
 
   color4 material_ambient(0.0, 0.0, 0.0, 1.0);
   color4 material_diffuse(1.0, 0.8, 0.0, 1.0);
-  color4 material_specular(0.0, 0.0, 0.0, 1.0);
+  color4 material_specular(1.0, 1.0, 1.0, 1.0);
   float material_shininess = 1;
 
   color4 ambient_product = light_ambient * material_ambient;
   color4 diffuse_product = light_diffuse * material_diffuse;
   color4 specular_product = light_specular * material_specular;
 
-  glUniform4fv(glGetUniformLocation(program, "AmbientProduct"), 1,
-               ambient_product);
-  glUniform4fv(glGetUniformLocation(program, "DiffuseProduct"), 1,
-               diffuse_product);
-  glUniform4fv(glGetUniformLocation(program, "SpecularProduct"), 1,
-               specular_product);
-  glUniform4fv(glGetUniformLocation(program, "LightPosition"), 1,
-               light_position);
-  glUniform1f(glGetUniformLocation(program, "Shininess"), material_shininess);
+  light_unifs.ambient_prod = GLuint(glGetUniformLocation(program, "AmbientProduct"));
+  light_unifs.diffuse_prod = GLuint(glGetUniformLocation(program, "DiffuseProduct"));
+  light_unifs.specular_prod = GLuint(glGetUniformLocation(program, "SpecularProduct"));
+
+  light_unifs.light_pos = GLuint(glGetUniformLocation(program, "LightPosition"));
+  light_unifs.shininess = GLuint(glGetUniformLocation(program, "Shininess"));
+
+
+
 
   // Retrieve transformation uniform variable locations
   ModelViewEarth = glGetUniformLocation(program, "ModelViewEarth");
@@ -422,6 +397,51 @@ void init()
 
   scalefactor = 1.0;
   render_line = false;
+
+
+  setup_scene(material_diffuse, material_ambient, material_specular, light_diffuse, light_ambient, light_specular,
+              light_position);
+
+
+}
+
+
+void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec4 const &material_specular,
+                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular,
+                 vec4 const &light_position)
+{
+  using namespace sls;
+  auto mtl = Material();
+
+
+  mtl.color = material_diffuse;
+  mtl.ambient = material_ambient;
+  mtl.specular = material_specular;
+  mtl.shininess = 50.0;
+  mtl.k_ambient = 1.0;
+  mtl.k_specular = 0.5;
+  mtl.k_diffuse = 1.0;
+  auto mv = Angel::Translate(-0.3f, 0.0f, 0.0f) * Angel::Scale(0.25f, 0.25f, 0.25f);
+
+  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv));
+
+  mtl.color = vec4(1.0, 0.5, 0.0, 1.0);
+  mv = Angel::Translate(0.5, 0.2, 0.1) * Angel::Scale(0.15, 0.15, 0.15);
+
+  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv));
+
+
+  scene.camera_modelview = model_view;
+
+  auto lc = LightColor();
+  lc.ambient_color = light_ambient;
+  lc.diffuse_color = light_diffuse;
+  lc.specular_color = light_specular;
+
+  auto lpos = light_position;
+  scene.light_colors.push_back(lc);
+  scene.light_locations.push_back(light_position);
+
 }
 
 /* -------------------------------------------------------------------------- */
@@ -447,21 +467,46 @@ void display(void)
                track_ball *                                  // Rotate Camera
                Scale(scalefactor, scalefactor, scalefactor); // Scale
 
-  glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
-  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-  glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0,
-                        BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4)));
-  glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0,
-                        BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4) +
-                                      mesh.normals.size() * sizeof(vec3)));
+  scene.camera_modelview = model_view;
 
-  glUniformMatrix4fv(ModelViewEarth, 1, GL_TRUE, model_view);
-  glUniformMatrix4fv(ModelViewLight, 1, GL_TRUE, model_view);
+  auto const &lcolor = scene.light_colors[0];
+  auto const &lpos = scene.light_locations[0];
 
-  glUniformMatrix4fv(NormalMatrix, 1, GL_TRUE, transpose(invert(model_view)));
 
-  glPointSize(5);
-  glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
+  for (auto const &obj: scene.objects) {
+
+    // setup color info
+    auto const &mtl = obj->material;
+
+    glUniform4fv(light_unifs.ambient_prod, 1,
+                 mtl.ambient * lcolor.ambient_color);
+    glUniform4fv(light_unifs.diffuse_prod, 1,
+                 mtl.color * lcolor.diffuse_color);
+    glUniform4fv(light_unifs.specular_prod, 1,
+                 mtl.specular * lcolor.specular_color);
+    glUniform4fv(light_unifs.light_pos, 1,
+                 lpos);
+    glUniform1f(light_unifs.shininess, mtl.shininess);
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
+    glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0,
+                          BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4)));
+    glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0,
+                          BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4) +
+                                        mesh.normals.size() * sizeof(vec3)));
+
+    auto mv_object = model_view * obj->get_modelview();
+
+    glUniformMatrix4fv(ModelViewEarth, 1, GL_TRUE, mv_object);
+    glUniformMatrix4fv(ModelViewLight, 1, GL_TRUE, model_view);
+
+    glUniformMatrix4fv(NormalMatrix, 1, GL_TRUE, transpose(invert(model_view)));
+
+    glPointSize(5);
+    glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
+  }
+
 
   glutSwapBuffers();
 }
@@ -474,8 +519,8 @@ void mouse(GLint button, GLint state, GLint x, GLint y)
   if (state == GLUT_UP) {
     moving = scaling = panning = 0;
     std::cout << x << "\t\t" << y << "\n";
-    auto ray = findRay(x, y, 0, 0);
-    castRayDebug(ray.first, ray.second);
+    auto ray = findRay(x, y, window_width, window_height);
+    castRayDebug(ray.start, ray.dir);
     glutPostRedisplay();
     return;
   }
@@ -521,9 +566,9 @@ void motion(GLint x, GLint y)
     glutPostRedisplay();
     return;
   } else if (moving) {
-    trackball(lastquat, 
-             (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
-             (2.0f * x - W) / W,      (H - 2.0f * y) / H);
+    trackball(lastquat,
+              (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
+              (2.0f * x - W) / W, (H - 2.0f * y) / H);
 
     add_quats(lastquat, curquat, curquat);
     build_rotmatrix(curmat, curquat);
