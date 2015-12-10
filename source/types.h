@@ -15,23 +15,38 @@
 
 namespace sls {
 
+//---------------------------------alias vector names---------------------------------------
+using vec4 = Angel::vec4;
+using vec3 = Angel::vec3;
+using vec2 = Angel::vec2;
+
+using mat4 = Angel::mat4;
+using mat3 = Angel::mat3;
+using mat2 = Angel::mat2;
+
 
 struct Ray final {
   // Simple struct
-  Angel::vec4 start;
-  Angel::vec4 dir;
+  vec4 start;
+  vec4 dir;
 
   //-----------------------------ctors/dtors-------------------------------------
-  Ray(Angel::vec4 start = Angel::vec4(0.0, 0.0, 0.0, 1.0),
-      Angel::vec4 dir = Angel::vec4(0.0, 0.0, 1.0, 0.0)) :
+  Ray(vec4 start = vec4(0.0, 0.0, 0.0, 1.0),
+      vec4 dir = vec4(0.0, 0.0, 1.0, 0.0)) :
       start(start), dir(dir) { }
 
   // non-virtual destructor
   ~Ray() { }
 };
 
-using intersection_fn_t =
-std::function<double(Ray)>;
+struct Intersection final {
+  double t;
+  vec3 normal;
+
+  Intersection(double t = -1, vec3 normal = vec3(0.0, 0.0, 1.0)) :
+      t(t), normal(normal) { }
+};
+
 
 struct CommandLineArgs {
   std::vector<std::string> argv;

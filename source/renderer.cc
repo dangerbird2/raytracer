@@ -29,15 +29,26 @@ CommandLineArgs parse_args(int argc, char const **argv)
 
 
 bool shadow_ray_unblocked(sls::Scene const &scene,
-                          std::shared_ptr<sls::SceneObject> obj_a,
+                          std::shared_ptr<sls::SceneObject> obj,
                           vec4 const &light_pos,
-                          vec4 const &normal,
                           vec4 const &intersect_point)
 {
-  for (auto const &obj_b: scene.objects) {
-    if (obj_b != obj_a) {
-      // TODO check for shadows.
-      auto shadow_ray = Ray{intersect_point, normalize(light_pos - intersect_point)};
+  auto dir = -light_pos;
+  if (light_pos.w >= 0) {
+    dir = -dir - intersect_point;
+  }
+
+  dir.w = 0.0;
+  dir = normalize(dir);
+
+
+  auto shadow_ray = Ray{intersect_point, dir};
+  for (auto const &i: scene.objects) {
+    if (i != obj) {
+      auto t = i->intersect_t(shadow_ray);
+      if (t >= 1e-7 && t < length(dir)) {
+        return false;
+      }
     }
   }
   return true;
@@ -71,18 +82,19 @@ auto imgui_setup() -> ImGuiIO
 vec4 shade_ray_intersection(Scene const &scene,
                             std::shared_ptr<SceneObject> obj,
                             vec4 const &intersect_point,
-                            vec4 normal_objview, vec4 env_reflection)
+                            vec3 normal_sceneview, vec4 env_reflection)
 {
   using namespace Angel;
 
   auto color = vec4();
 
+  auto name = obj->name;
   auto valid_reflection = true;
   auto const &mtl = obj->material;
 
   auto pos = xyz(intersect_point);
 
-  auto normal = normalize(xyz(obj->get_normalview() * normal_objview));
+  auto normal = normalize(normal_sceneview);
 
 
   if (!valid_reflection) { // TODO test for invalid reflection
@@ -93,7 +105,14 @@ vec4 shade_ray_intersection(Scene const &scene,
     assert(n_lights >= 0);
 
     for (auto i = 0; i < n_lights; ++i) {
-      auto l_pos = normalize(xyz(scene.light_locations[0]));
+      auto light_location = scene.light_locations[0];
+      auto l_pos = vec3();
+      if (light_location.w == 0){
+        l_pos =normalize(xyz(light_location));
+      } else {
+        l_pos = normalize(xyz(scene.camera_modelview * (light_location - intersect_point)));
+      }
+
 
 
 
@@ -105,12 +124,8 @@ vec4 shade_ray_intersection(Scene const &scene,
       auto kd = fmax(dot(l_dir, normal), 0.0);
 
       auto const unblocked =
-          shadow_ray_unblocked(scene,
-                               obj,
-                               l_dir,
-                               normal,
-                               intersect_point);
-      if (!unblocked && kd <= 0.0) {
+          shadow_ray_unblocked(scene, obj, vec4(l_dir, light_location.w), intersect_point);
+      if (!unblocked || kd <= 0.0) {
         color = ambient;
         color.w = mtl.color.w;
         return color;

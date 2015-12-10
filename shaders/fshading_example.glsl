@@ -13,7 +13,7 @@ void main()
   
   vec3 L;
   if(LightPosition.w == 0.0){
-    L = normalize(normalize(LightPosition.xyz)- pos);
+    L = normalize(normalize(LightPosition.xyz));
   }else{
     L = normalize( (ModelViewLight*LightPosition).xyz - pos );
   }

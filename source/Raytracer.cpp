@@ -21,8 +21,8 @@
 #include <functional>
 
 void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec4 const &material_specular,
-                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular,
-                 vec4 const &light_position);
+                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular);
+
 vec4 castRay(vec4 p0, vec4 dir, size_t depth = 0, size_t max_depth = 1);
 
 
@@ -40,7 +40,7 @@ static std::string out_file_name;
 int window_width, window_height;
 
 bool render_line;
-Mesh mesh;
+Mesh sphere_mesh;
 GLuint buffer_object;
 
 GLuint vPosition, vNormal, vTexCoord;
@@ -97,6 +97,8 @@ sls::Ray findRay(GLdouble x,
   int viewport[4];
 
   glGetIntegerv(GL_VIEWPORT, viewport);
+  viewport[2] = width;
+  viewport[3] = height;
 
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++) {
@@ -132,18 +134,16 @@ sls::Ray findRay(GLdouble x,
 void castRayDebug(vec4 p0, vec4 dir)
 {
   for (auto i: scene.objects) {
-    double t = i->intersect(sls::Ray{p0, dir});
+    double t = i->intersect_t(sls::Ray{p0, dir});
 
     if (t > 0) {
       auto color = castRay(p0, dir);
       vec4 temp = p0 + t * dir;
       vec3 temp_3 = vec3(temp.x, temp.y, temp.z);
       std::cout << p0 + t * dir << "\t\t" << length(temp_3) << "\n"
-          << "color: " << color << '\n';
-
+      << "color: " << color << '\n';
     }
   }
-
 }
 
 /* -------------------------------------------------------------------------- */
@@ -156,30 +156,67 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth)
   using namespace sls;
   using namespace std;
   auto clear_color = vec4(0.0, 0.0, 0.0, 0.0);
+  auto ray_viewspace = sls::Ray{p0, dir};
+
 
   auto color = clear_color;
 
+  double z_depth = NAN;
+  struct obj_hit_t {
+    shared_ptr <SceneObject> obj;
+    Intersection inter;
+    vec4 hit_point;
+  };
+  auto hits = vector<obj_hit_t>();
+  hits.reserve(scene.objects.size());
+
+  auto z_max = NAN;
+
+  // iterate one time to get maximum depth
+  // for ray
   for (auto obj : scene.objects) {
+    auto intersection = obj->intersect(ray_viewspace);
+    auto hit_point = p0 + intersection.t * dir;
+
+    if (intersection.t >= 0) {
+      hits.push_back(obj_hit_t{obj, intersection, hit_point});
+      z_max = isnan(z_max) ? hit_point.z : z_max;
+      z_max = fmax(z_max, hit_point.z);
+
+    }
+  }
+
+
+  //
+  for (obj_hit_t const &hit : hits) {
+
+    auto const &obj = hit.obj;
+    auto const &intersection = hit.inter;
+
     auto obj_color = vec4();
     auto origin = vec4(0.0, 0.0, 0.0, 1.0);
-    auto const &mv = obj->get_modelview();
-    auto const &mvi = obj->get_modelview_inverse();
-    auto ray_viewspace = sls::Ray{p0, dir};
-    double t = obj->intersect(ray_viewspace);
+    auto const &mv = obj->modelview();
+    auto const &mvi = obj->modelview_inverse();
 
-    if (t < 0) {
+    auto t = intersection.t;
+    auto normal = normalize(intersection.normal);
+    auto obj_name = obj->name;
+
+    auto hit_viewspace = hit.hit_point;
+
+    // check if point is objstructed by another object
+    auto depth_test = hit_viewspace.z >= z_max;
+
+    if (t < 0 || !depth_test) {
       obj_color = clear_color;
     } else {
-      auto hit_viewspace = p0 + t * dir;
-      auto hit_objectspace = obj->get_modelview_inverse() * hit_viewspace;
 
-      auto normal = normalize(hit_objectspace);
+
       auto spec = vec3();
       auto transmitted = vec3();
 
       auto const &mtl = obj->material;
 
-      assert(mtl.k_ambient <= 1.0 && mtl.k_specular <= 1.0 && mtl.k_diffuse <= 1.0);
 
       if (mtl.k_specular > 0) { // non-zero reflectivity
         // TODO Specular
@@ -227,7 +264,7 @@ void rayTrace()
 
 
 
-  using loop_pair_t = pair<size_t, vector<vec4>>;
+  using loop_pair_t = pair <size_t, vector<vec4>>;
 
 
   auto n_threads = 20;
@@ -262,7 +299,7 @@ void rayTrace()
     work_units.push_back(work_unit);
   }
 
-  auto results = vector<future<vector<rt_data>>>();
+  auto results = vector < future<vector < rt_data>>>();
 
   cout << "work units size " << work_units.size() << endl;
   for (auto &unit: work_units) {
@@ -300,7 +337,7 @@ void rayTrace()
 /* -------------------------------------------------------------------------- */
 void init()
 {
-  mesh.makeSubdivisionSphere(5);
+  sphere_mesh.makeSubdivisionSphere(10);
 
 
   // Create a vertex array object
@@ -312,18 +349,18 @@ void init()
   glGenBuffers(1, &buffer_object);
 
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
-  unsigned int vertices_bytes = mesh.vertices.size() * sizeof(vec4);
-  unsigned int normals_bytes = mesh.normals.size() * sizeof(vec3);
-  unsigned int uv_bytes = mesh.uvs.size() * sizeof(vec2);
+  unsigned int vertices_bytes = sphere_mesh.vertices.size() * sizeof(vec4);
+  unsigned int normals_bytes = sphere_mesh.normals.size() * sizeof(vec3);
+  unsigned int uv_bytes = sphere_mesh.uvs.size() * sizeof(vec2);
 
   glBufferData(GL_ARRAY_BUFFER, vertices_bytes + normals_bytes + uv_bytes, NULL,
                GL_STATIC_DRAW);
   unsigned int offset = 0;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, vertices_bytes, &mesh.vertices[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, offset, vertices_bytes, &sphere_mesh.vertices[0]);
   offset += vertices_bytes;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, normals_bytes, &mesh.normals[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, offset, normals_bytes, &sphere_mesh.normals[0]);
   offset += normals_bytes;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, uv_bytes, &mesh.uvs[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, offset, uv_bytes, &sphere_mesh.uvs[0]);
 
   std::string vshader = source_path + "/shaders/vshading_example.glsl";
   std::string fshader = source_path + "/shaders/fshading_example.glsl";
@@ -342,17 +379,14 @@ void init()
   vTexCoord = glGetAttribLocation(program, "vTexCoord");
   glEnableVertexAttribArray(vTexCoord);
 
-  // Initialize shader lighting parameters
-  point4 light_position(0.0, 0.0, 10.0, 1.0);
 
   color4 light_ambient(1.0, 1.0, 1.0, 1.0);
   color4 light_diffuse(1.0, 1.0, 1.0, 1.0);
   color4 light_specular(1.0, 1.0, 1.0, 1.0);
 
-  color4 material_ambient(0.0, 0.0, 0.0, 1.0);
+  color4 material_ambient(1.0, 1.0, 1.0, 1.0);
   color4 material_diffuse(1.0, 0.8, 0.0, 1.0);
   color4 material_specular(1.0, 1.0, 1.0, 1.0);
-  float material_shininess = 1;
 
   color4 ambient_product = light_ambient * material_ambient;
   color4 diffuse_product = light_diffuse * material_diffuse;
@@ -399,36 +433,91 @@ void init()
   render_line = false;
 
 
-  setup_scene(material_diffuse, material_ambient, material_specular, light_diffuse, light_ambient, light_specular,
-              light_position);
+  setup_scene(material_diffuse, material_ambient, material_specular, light_diffuse, light_ambient, light_specular);
 
 
 }
 
 
 void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec4 const &material_specular,
-                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular,
-                 vec4 const &light_position)
+                 vec4 const &light_diffuse, vec4 const &light_ambient, vec4 const &light_specular)
 {
   using namespace sls;
+  using namespace Angel;
   auto mtl = Material();
+
+  // cornell box sphere params (using big sphere wall hack)
+  auto r = 1e2;
+  auto box_width = 1.0;
+  auto back_mv = Translate(0.0, 0.0, -r - box_width) * Scale(r, r, r);
+  auto left_mv = Translate(-r - box_width, 0, 0) * Scale(r, r, r);
+  auto right_mv = Translate(r + box_width, 0, 0) * Scale(r, r, r);
+  auto bottom_mv = Translate(0.0, -r - box_width, 0) * Scale(r, r, r);
+  auto top_mv = Translate(0.0, r + box_width, 0) * Scale(r, r, r);
+
+
+
+
+  auto gl_mesh = GLMesh();
+  gl_mesh.vbo = buffer_object;
+  gl_mesh.mesh = sphere_mesh;
 
 
   mtl.color = material_diffuse;
   mtl.ambient = material_ambient;
   mtl.specular = material_specular;
-  mtl.shininess = 50.0;
-  mtl.k_ambient = 1.0;
+  mtl.shininess = 150;
+  mtl.k_ambient = 0.1;
   mtl.k_specular = 0.5;
   mtl.k_diffuse = 1.0;
-  auto mv = Angel::Translate(-0.3f, 0.0f, 0.0f) * Angel::Scale(0.25f, 0.25f, 0.25f);
+  auto mv = Angel::Translate(0.0f, -0.5f, 0.0f) * Angel::Scale(0.25f, 0.25f, 0.25f);
 
-  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv));
+  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv, &gl_mesh));
 
-  mtl.color = vec4(1.0, 0.5, 0.0, 1.0);
-  mv = Angel::Translate(0.5, 0.2, 0.1) * Angel::Scale(0.15, 0.15, 0.15);
+  mtl.shininess = 1.2;
+  mtl.k_specular = 0.25;
+  mtl.color = vec4(0.2, 0.5, 0.0, 1.0);
+  mv = Angel::Translate(0.5, 0.2, 1.0) * Angel::Scale(0.15, 0.15, 0.15);
 
-  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv));
+  scene.objects.push_back(std::make_shared<UnitSphere>(std::ref(mtl), mv, &gl_mesh));
+
+  mtl.shininess = 200;
+  mtl.color = vec4(0.8, 0.8, 0.7, 1.0);
+  mtl.specular = vec4(0.8, 1.0, 0.9, 1.0);
+  mtl.k_diffuse = 0.5;
+  mtl.k_specular = 4.0;
+
+
+  auto plane = std::make_shared<UnitSphere>(std::ref(mtl), back_mv, &gl_mesh);
+
+
+  plane->name = "back";
+  scene.objects.push_back(plane);
+
+
+  plane = std::make_shared<UnitSphere>(std::ref(mtl), top_mv, &gl_mesh);
+  plane->name = "top";
+  scene.objects.push_back(plane);
+
+  plane = std::make_shared<UnitSphere>(std::ref(mtl), bottom_mv, &gl_mesh);
+  plane->name = "bottom";
+  scene.objects.push_back(plane);
+
+  mtl.color = vec4(0.0, 0.0, 0.7, 1.0);
+  mtl.specular = vec4(1.0,1.0, 1.0, 1.0);
+  mtl.k_diffuse = 0.8;
+  mtl.k_specular = 0.25;
+  plane = std::make_shared<UnitSphere>(std::ref(mtl), left_mv, &gl_mesh);
+  plane->name = "left";
+  scene.objects.push_back(plane);
+
+
+  mtl.color = vec4(0.7, 0.0, 0.0, 1.0);
+  plane = std::make_shared<UnitSphere>(std::ref(mtl), right_mv, &gl_mesh);
+  plane->name = "right";
+  scene.objects.push_back(plane);
+
+
 
 
   scene.camera_modelview = model_view;
@@ -438,7 +527,7 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   lc.diffuse_color = light_diffuse;
   lc.specular_color = light_specular;
 
-  auto lpos = light_position;
+  auto light_position = vec4(0.0, 2.0, 1.0);
   scene.light_colors.push_back(lc);
   scene.light_locations.push_back(light_position);
 
@@ -479,32 +568,27 @@ void display(void)
     auto const &mtl = obj->material;
 
     glUniform4fv(light_unifs.ambient_prod, 1,
-                 mtl.ambient * lcolor.ambient_color);
+                 mtl.k_ambient * mtl.ambient * lcolor.ambient_color);
     glUniform4fv(light_unifs.diffuse_prod, 1,
-                 mtl.color * lcolor.diffuse_color);
+                 mtl.k_diffuse * mtl.color * lcolor.diffuse_color);
     glUniform4fv(light_unifs.specular_prod, 1,
-                 mtl.specular * lcolor.specular_color);
+                 mtl.k_specular * mtl.specular * lcolor.specular_color);
     glUniform4fv(light_unifs.light_pos, 1,
                  lpos);
     glUniform1f(light_unifs.shininess, mtl.shininess);
 
-    glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
-    glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0,
-                          BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4)));
-    glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0,
-                          BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4) +
-                                        mesh.normals.size() * sizeof(vec3)));
 
-    auto mv_object = model_view * obj->get_modelview();
-
+    auto mv_object = model_view * obj->modelview();
     glUniformMatrix4fv(ModelViewEarth, 1, GL_TRUE, mv_object);
     glUniformMatrix4fv(ModelViewLight, 1, GL_TRUE, model_view);
 
-    glUniformMatrix4fv(NormalMatrix, 1, GL_TRUE, transpose(invert(model_view)));
+    glUniformMatrix4fv(NormalMatrix, 1, GL_TRUE, transpose(invert(mv_object)));
 
-    glPointSize(5);
-    glDrawArrays(GL_TRIANGLES, 0, mesh.vertices.size());
+
+    if (obj->mesh) {
+      obj->mesh->draw(vPosition, vNormal, vTexCoord);
+    }
+
   }
 
 
@@ -586,12 +670,47 @@ void keyboard(unsigned char key, int x, int y)
 {
   using namespace std;
   switch (key) {
+
+    case 'l':
+    case 'L': {
+      // ask for new light position in console
+      float x = 0.0, y = 0.0, z = 0.0, w = 0.0;
+
+      cout << "enter 4 float values for the new light position:\n"
+      << "x:\n";
+      cin >> x;
+
+      cout << "y:\n";
+      cin >> y;
+
+      cout << "z:\n";
+      cin >> z;
+
+      cout << "w:\n";
+      cin >> w;
+
+      w = nearlyEqual(w, 0.0, 1e-7)? 0.f: 1.f;
+
+      auto pos = vec4(x, y, z, w);
+      if (scene.light_locations.size() == 0) {
+        scene.light_locations.push_back(pos);
+      } else {
+        scene.light_locations[0] = pos;
+      }
+
+      cout << "light location: " << pos << "\n";
+
+      break;
+
+    }
+
+
     case 033: // Escape Key
     case 'q':
     case 'Q':
       exit(EXIT_SUCCESS);
       break;
-    case ' ':
+    case ' ': {
       render_line = !render_line;
       if (render_line) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -599,6 +718,8 @@ void keyboard(unsigned char key, int x, int y)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       }
       break;
+    }
+
     case 'r': {
       fprintf(stderr, "raytracing\n");
       auto rt_timer = sls::timeit(rayTrace);
@@ -606,8 +727,10 @@ void keyboard(unsigned char key, int x, int y)
       << "\nperformed in "
       << chrono::duration_cast<chrono::milliseconds>(rt_timer).count() <<
       "ms\n";
-    }
       break;
+    }
+
+
   }
 }
 
@@ -621,7 +744,7 @@ void reshape(int width, int height)
   glViewport(0, 0, width, height);
 
   GLfloat aspect = GLfloat(width) / height;
-  projection = Perspective(45.0, aspect, 1.0, 5.0);
+  projection = Perspective(45.0, aspect, 1.0, 50);
 
   glUniformMatrix4fv(Projection, 1, GL_TRUE, projection);
 }
@@ -638,7 +761,6 @@ void timer(int value)
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv)
 {
-
   app_args = sls::parse_args(argc, const_cast<char const **>(argv));
 
   if (app_args.argv.size() > 1) {

@@ -21,10 +21,7 @@ namespace sls {
 
 CommandLineArgs parse_args(int argc, char const **argv);
 
-bool shadow_ray_unblocked(sls::Scene const &scene,
-                          std::shared_ptr<sls::SceneObject> obj_a,
-                          vec4 const &light_pos,
-                          vec4 const &normal,
+bool shadow_ray_unblocked(sls::Scene const &scene, std::shared_ptr<sls::SceneObject> obj, vec4 const &light_pos,
                           vec4 const &intersect_point);
 
 Angel::vec3 reflected_ray(sls::Scene
@@ -37,7 +34,7 @@ Angel::vec3 reflected_ray(sls::Scene
 
 
 vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj, vec4 const &intersect_point,
-                            vec4 normal_objview,
+                            vec3 normal_sceneview,
                             vec4 env_reflection = vec4(0.0, 0.0, 0.0, 0.0));
 
 }
