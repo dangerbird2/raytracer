@@ -1,6 +1,23 @@
+
+#ifndef SLS_MAX_LIGHTS
+#define SLS_MAX_LIGHTS 8
+#endif //
+
 uniform vec4 AmbientProduct, DiffuseProduct, SpecularProduct;
+
+
 uniform vec4 LightPosition;
 uniform float Shininess;
+
+
+//TODO multiple lighting
+
+uniform vec4 AmbientProducts[SLS_MAX_LIGHTS];
+uniform vec4 DiffuseProducts[SLS_MAX_LIGHTS];
+uniform vec4 SpecularProducts[SLS_MAX_LIGHTS];
+uniform vec4 LightPositions[SLS_MAX_LIGHTS];
+uniform int n_lights;
+
 
 uniform mat4 ModelViewLight;
 

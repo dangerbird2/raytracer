@@ -107,13 +107,11 @@ vec4 shade_ray_intersection(Scene const &scene,
     for (auto i = 0; i < n_lights; ++i) {
       auto light_location = scene.light_locations[0];
       auto l_pos = vec3();
-      if (light_location.w == 0){
-        l_pos =normalize(xyz(light_location));
+      if (light_location.w == 0) {
+        l_pos = normalize(xyz(light_location));
       } else {
         l_pos = normalize(xyz(scene.camera_modelview * (light_location - intersect_point)));
       }
-
-
 
 
       auto const &l_color = scene.light_colors[i];
@@ -141,7 +139,9 @@ vec4 shade_ray_intersection(Scene const &scene,
       auto ks = pow(spec_angle, mtl.shininess);
 
       auto spec_product = mtl.k_specular * l_color.specular_color * mtl.specular;
-      auto specular = env_reflection + (ks * spec_product);
+      auto reflective = mtl.k_reflective * env_reflection * mtl.specular;
+
+      auto specular = clamp(reflective + (ks * spec_product), 0.0, 1.0);
 
       if (nearlyEqual(kd, 0.0, 1e-7)) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
 

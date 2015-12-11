@@ -118,6 +118,11 @@ struct Scene {
   std::vector<Angel::vec4> light_locations;
 
   std::vector<std::shared_ptr<SceneObject>> objects;
+
+  size_t n_lights(){
+    return std::min(light_colors.size(), light_locations.size());
+  }
+
 };
 
 struct UnitSphere : public SceneObject {

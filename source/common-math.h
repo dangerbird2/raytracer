@@ -119,7 +119,9 @@ template<typename ANGEL_VEC>
 static
 ANGEL_VEC reflect(ANGEL_VEC const &incident, ANGEL_VEC const &normal)
 {
-  return incident - 2.0 * Angel::dot(normal, incident) * normal;
+  using namespace Angel;
+  const auto cos_theta = dot(-normal, incident);
+  return  incident - 2.0 * cos_theta  * normal ;
 }
 
 

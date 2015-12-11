@@ -10,6 +10,15 @@ varying vec3 pos;
 varying vec3 N;
 varying vec2 texCoord;
 
+//TODO multiple lighting
+
+uniform vec4 AmbientProducts[SLS_MAX_LIGHTS];
+uniform vec4 DiffuseProducts[SLS_MAX_LIGHTS];
+uniform vec4 SpecularProducts[SLS_MAX_LIGHTS];
+uniform vec4 LightPositions[SLS_MAX_LIGHTS];
+
+uniform int n_lights;
+
 
 void main()
 {

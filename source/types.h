@@ -71,7 +71,11 @@ public:
    */
   float k_diffuse = 1.0;
 
+  // gloss (phong) shading factor
   float k_specular = 1.0;
+  // mirror shading factor
+  float k_reflective = 0.0;
+
   float k_transmittance = 0.0;
   float k_ambient = 1.0;
   /**
