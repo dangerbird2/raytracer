@@ -72,7 +72,7 @@ public:
   float k_diffuse = 1.0;
 
   // gloss (phong) shading factor
-  float k_specular = 1.0;
+  float k_specular = 0.00;
   // mirror shading factor
   float k_reflective = 0.0;
 
@@ -81,7 +81,7 @@ public:
   /**
    * brief specular phong exponent (shininess)
    */
-  float shininess = 1.0;
+  float shininess = 1.50;
 
 
   /**
@@ -113,7 +113,7 @@ public:
     self.color = vec4(1.0, 0.0, 0.0, 1.0);
 
     self.shininess = 2.0;
-    self.k_specular = 0.1;
+    self.k_specular = 0.0;
     self.k_reflective = 0.0;
     self.k_diffuse = 1.0;
     self.k_transmittance = 0.0;
@@ -142,6 +142,9 @@ public:
   static Material floor()
   {
     auto self = Material();
+
+    self.k_specular = 0.2;
+    self.shininess = 40;
 
 
     return self;

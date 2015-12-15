@@ -232,7 +232,7 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
     auto transmitted = vec4(0.0, 0.0, 0.0, 0.0);
 
     auto const &mtl = obj->material;
-    if (mtl.k_reflective > 0.0) { // non-zero reflectivity
+    if (mtl.k_reflective > 0.0 || mtl.k_specular > 0.0) { // non-zero reflectivity
       auto reflect_dir = normalize(-reflect(dir, normalize(vec4(normal, 0.0))));
       reflection = castRay(hit_viewspace, reflect_dir, depth + 1, max_depth, obj);
     }
