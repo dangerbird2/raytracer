@@ -277,7 +277,7 @@ void rayTrace()
 
   using namespace sls;
 
-#if 1
+#if 0
   auto width = window_width;
   auto height = window_height;
 #else
