@@ -89,21 +89,25 @@ public:
    */
   float k_refraction = 1.53; // diamond
   //---------------------------------material prefabs---------------------------------------
-  static Material glass(){
-    auto self = Material();
 
+
+
+  static Material glass()
+  {
+    auto self = Material();
 
 
     self.k_specular = 0.1;
     self.k_reflective = 0.1;
     self.k_diffuse = 0.0;
     self.k_transmittance = 1.0;
-    self.k_refraction = 1.3;
+    self.k_refraction = 1.15;
 
     return self;
   }
 
-  static Material wall_a(){
+  static Material wall_a()
+  {
     auto self = Material();
 
     self.color = vec4(1.0, 0.0, 0.0, 1.0);
@@ -117,7 +121,8 @@ public:
     return self;
   }
 
-  static Material wall_b() {
+  static Material wall_b()
+  {
     auto self = wall_a();
 
     self.color = vec4(0.0, 1.0, 1.0, 1.0);
@@ -126,7 +131,42 @@ public:
     return self;
   }
 
+  static Material wall_white()
+  {
+    auto self = Material();
+
+
+    return self;
+  }
+
+  static Material floor()
+  {
+    auto self = Material();
+
+
+    return self;
+  }
+
+  static Material gold()
+  {
+    auto self = Material();
+
+    self.color = vec4(1.0, 1.0, 0.0, 1.0);
+    self.ambient = self.color;
+    self.specular = vec4(1.0, 0.9, 0.7, 1.0);
+    self.k_diffuse = 0.1;
+    self.k_specular = 0.8;
+    self.k_reflective = 0.7;
+
+    self.shininess = 10.0;
+
+    return self;
+
+  }
+
 };
+
+
 
 }
 

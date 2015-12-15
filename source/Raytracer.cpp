@@ -500,35 +500,13 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   gl_mesh.vbo = buffer_object;
   gl_mesh.mesh = sphere_mesh;
 
-  mtl.k_reflective = 0.0;
-  mtl.color = material_diffuse;
-  mtl.ambient = material_ambient;
-  mtl.specular = material_specular;
-  mtl.shininess = 10;
-  mtl.k_reflective = 0.9;
-
-  mtl.k_ambient = 0.1;
-  mtl.k_specular = 10;
-  mtl.k_diffuse = 0.2;
-
-  // ball a
-  mtl.color = gold_diff;
-  mtl.specular = gold_spec;
   r = 0.25;
   auto mv =
       Angel::Translate(0.6f, -box_width + r, -0.4f) * Angel::Scale(r, r, r);
   auto gold_ball =
-      make_shared<UnitSphere>(std::ref(mtl), mv, &gl_mesh);
+      make_shared<UnitSphere>(Material::gold(), mv, &gl_mesh);
   gold_ball->name = "gold_ball";
   scene.objects.push_back(gold_ball);
-
-  // ball b
-  mtl.color = iron_diff;
-  mtl.specular = iron_spec;
-  mtl.k_diffuse = 0.35;
-  mtl.k_specular = 0.1;
-  mtl.k_transmittance = 0.9;
-  mtl.k_refraction = 1.40;
 
   r = 0.3;
   mv = Angel::Translate(0.1, -box_width + r, 0.2) * Angel::Scale(r, r, r);
@@ -538,33 +516,19 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   scene.objects.push_back(clear_ball);
 
 
-  mtl.k_transmittance = 0.0;
-  // back (b)wall
-  mtl.shininess = 200;
-  mtl.color = vec4(1, 1, 1.0, 1.0);
-  mtl.specular = vec4(0.8, 1.0, 0.9, 1.0);
-  mtl.k_diffuse = 0.9;
-  mtl.k_specular = 0.1;
-  mtl.shininess = 30;
-  mtl.k_reflective = 0.0;
-
-  auto plane = std::make_shared<UnitSphere>(std::ref(mtl), back_mv, &gl_mesh);
+  auto plane = std::make_shared<UnitSphere>(Material::wall_white(),
+                                            back_mv, &gl_mesh);
   plane->name = "back";
   scene.objects.push_back(plane);
 
   // floor/ceil
 
-  plane = std::make_shared<UnitSphere>(std::ref(mtl), bottom_mv, &gl_mesh);
+  plane = std::make_shared<UnitSphere>(Material::wall_white(),
+                                       bottom_mv, &gl_mesh);
   plane->name = "bottom";
   scene.objects.push_back(plane);
 
-  mtl.k_specular = 0.9;
-  mtl.k_diffuse = 0.9;
-  mtl.shininess = 30;
-  mtl.k_reflective = 0.0;
-  mtl.specular = vec4(1.0, 1.0, 1.0, 1.0);
-
-  plane = std::make_shared<UnitSphere>(std::ref(mtl), top_mv, &gl_mesh);
+  plane = std::make_shared<UnitSphere>(Material::wall_white(), top_mv, &gl_mesh);
   plane->name = "top";
   scene.objects.push_back(plane);
 
@@ -589,8 +553,6 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   lc.ambient_color = vec4(0.5, 0.5, 0.50, 1.0);
   lc.diffuse_color = vec4(0.5, 0.5, 0.50, 1.0);
   lc.specular_color = vec4(0.5, 0.5, 0.50, 1.0);
-
-
 
 
   auto light_position = vec4(0.0, box_width - 0.4, -0.5, 1.0);
@@ -638,8 +600,6 @@ void display(void)
 
   scene.camera_modelview = model_view;
 
-  auto const &lcolor = scene.light_colors[0];
-  auto const &lpos = scene.light_locations[0];
 
   using namespace std;
 
@@ -651,19 +611,22 @@ void display(void)
   glUniform1i(light_unifs.n_lights, n_lights);
 
   for (auto const &obj: scene.objects) {
+
+
     if (!(obj->target && sls::TargetOpenGL)) {
       continue;
     }
 
     // setup color info
     auto const &mtl = obj->material;
+    auto k_specular = (mtl.k_specular + mtl.k_reflective);
+
+
     auto ambient = vector<vec4>();
     auto diffuse = vector<vec4>();
     auto specular = vector<vec4>();
     for (auto i = 0; i < n_lights; ++i) {
       auto const &l = scene.light_colors[i];
-
-      auto product = sls::LightColor();
 
 
       ambient.push_back(
@@ -671,8 +634,9 @@ void display(void)
       diffuse.push_back(
           mtl.k_diffuse * mtl.color * l.diffuse_color);
 
+
       specular.push_back(
-          mtl.k_specular * mtl.specular * l.specular_color);
+          k_specular * mtl.specular * l.specular_color);
 
 
     }

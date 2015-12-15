@@ -49,18 +49,9 @@ void main()
 
     float attenuation = 1.0;
     if(l_pos.w == 0.0){
-      L = normalize(normalize(l_pos.xyz));
+      L = normalize((ModelViewLight*l_pos).xyz);
     }else{
       L = (ModelViewLight*l_pos).xyz - pos;
-      // take into account inverse square law
-      //const float const_term = 1.0;
-      //const float linear_term = 0.9;
-      //const float quadratic_term = 0.032;
-      //float d = abs(length(L));
-      //attenuation =
-      //  2.0 /
-      //  (const_term + linear_term * d + quadratic_term * d * d);
-//
       L = normalize(L);
 
     }
@@ -85,6 +76,7 @@ void main()
   }
 
   
+  gl_FragColor = color_sum;
   gl_FragColor = color_sum;
   gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
   gl_FragColor.a = DiffuseProducts[0].w;

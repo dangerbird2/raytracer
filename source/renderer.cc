@@ -94,6 +94,7 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
       if (light_location.w == 0) {
         l_pos = normalize(xyz(scene.camera_modelview * light_location));
       } else {
+        light_location.w = 1.0;
         l_pos = normalize(xyz(scene.camera_modelview * light_location - intersect_point));
       }
 
@@ -107,34 +108,39 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
           shadow_ray_unblocked(scene,
                                obj,
                                vec4(l_dir, light_location.w), intersect_point);
-      if (!unblocked || kd <= 0.0) {
-        color += ambient;
-        continue;
-      }
+
 
       auto diffuse = l_color.diffuse_color * mtl.color * mtl.k_diffuse * kd;
 
+      if (kd <= 0.0) {
+        continue;
+      }
+      if (!unblocked || kd <= 0.0) {
+        //color += ambient;
+        //continue;
+        diffuse = vec4(0.0, 0.0, 0.0, 0.0);
+      }
       auto eye = vec3(normalize(-xyz(intersect_point)));
-      auto reflect_dir = normalize(-reflect(l_dir, normal));
+      auto reflect_dir = normalize(reflect(l_dir, normal));
 
       //  phong specular
       auto spec_angle = fmax(dot(reflect_dir, eye), 0.0);
 
-      auto ks = pow(spec_angle, mtl.shininess);
+      auto ks = pow(spec_angle, mtl.shininess) / 10.0;
 
-      auto spec_product = mtl.k_specular * l_color.specular_color * mtl.specular;
+      auto spec_product = mtl.k_specular * env_reflection * mtl.specular;
       auto reflective = mtl.k_reflective * env_reflection * mtl.specular;
 
-      auto specular = clamp(reflective + (ks * spec_product), 0.0, 1.0);
+      auto specular = clamp(ks * (spec_product) + reflective, 0.0, 1.0);
 
-      if (nearlyEqual(kd, 0.0, 1e-7)) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
+      if (dot(l_pos, normal) < 0.0) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
 
       auto refraction = vec4(0.0, 0.0, 0.0, 0.0);
       if (mtl.k_transmittance > 0.0) {
         refraction = mtl.color * mtl.k_transmittance * env_refraction;
       }
 
-      color += (ambient + diffuse + specular + refraction);
+      color += (diffuse + ambient + specular + refraction);
     }
 
   }
