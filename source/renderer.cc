@@ -81,9 +81,7 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
   auto normal = normalize(normal_sceneview);
 
 
-  if (!valid_reflection) { // TODO test for invalid reflection
-    return env_refraction;
-  } else { // simple local reflectance
+  if (valid_reflection) { // simple local reflectance
     auto n_lights = scene.n_lights();
 
     for (auto i = 0; i < n_lights; ++i) {
@@ -113,6 +111,7 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
       auto diffuse = l_color.diffuse_color * mtl.color * mtl.k_diffuse * kd;
 
       if (kd <= 0.0) {
+        color += ambient;
         continue;
       }
       if (!unblocked || kd <= 0.0) {
@@ -129,22 +128,24 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
       auto ks = pow(spec_angle, mtl.shininess) / 10.0;
 
       auto spec_product = mtl.k_specular * env_reflection * mtl.specular;
-      auto reflective = mtl.k_reflective * env_reflection * mtl.specular;
 
-      auto specular = clamp(ks * (spec_product) + reflective, 0.0, 1.0);
+      auto specular = clamp(ks * (spec_product), 0.0, 1.0);
 
       if (dot(l_pos, normal) < 0.0) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
 
-      auto refraction = vec4(0.0, 0.0, 0.0, 0.0);
-      if (mtl.k_transmittance > 0.0) {
-        refraction = mtl.color * mtl.k_transmittance * env_refraction;
-      }
 
-      color += (diffuse + ambient + specular + refraction);
+      color += (diffuse + ambient + specular);
     }
 
   }
 
+  auto refraction = vec4(0.0, 0.0, 0.0, 0.0);
+  if (mtl.k_transmittance > 0.0) {
+    refraction = mtl.color * mtl.k_transmittance * env_refraction;
+  }
+
+  auto reflective = mtl.k_reflective * env_reflection * mtl.specular;
+  color += refraction + reflective;
   color.w = mtl.color.w;
 
 

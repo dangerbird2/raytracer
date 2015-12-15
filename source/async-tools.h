@@ -33,7 +33,7 @@ auto timeit(FN_T function, ARGS_T ...args) -> decltype(auto)
 
   auto t_start = chrono::high_resolution_clock::now();
 
-  function(&args...);
+  function(args...);
 
   auto t_end = chrono::high_resolution_clock::now();
 

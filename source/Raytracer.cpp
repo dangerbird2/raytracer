@@ -17,8 +17,7 @@
 
 #include "async-tools.h"
 
-#include <string>
-#include <functional>
+#include <random>
 
 void setup_scene(vec4 const &material_diffuse,
                  vec4 const &material_ambient, vec4 const &material_specular);
@@ -193,8 +192,6 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
     if ((obj->target & sls::TargetRayTracer) != sls::TargetRayTracer) {
       continue;
     }
-
-
     auto intersection = obj->intersect(ray_viewspace);
     auto hit_point = p0 + intersection.t * dir;
     if (intersection.t >= 0) {
@@ -212,7 +209,7 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
 
 
   if (hit_found) {
-r
+
     auto const &obj = nearest_hit.obj;
     auto const &intersection = nearest_hit.inter;
 
@@ -266,11 +263,14 @@ r
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-
-void rayTrace()
+/**
+ * @brief Performs the ray tracing algorithm.
+ * @detail allows multiple sampling for diffuse path tracing or
+ * similar algorithms, writing to image each sample for instant feedback
+ */
+void rayTrace(size_t max_samples=1)
 {
   using namespace std;
-
   using namespace sls;
 
 #if 1
@@ -284,6 +284,8 @@ void rayTrace()
 
   auto buffer =
       vector<uint8_t>(width * height * 4);
+  auto color_buffer =
+      vector<color4>(width * height);
 
   using loop_pair_t = pair<size_t, vector<vec4>>;
 
@@ -295,10 +297,11 @@ void rayTrace()
   auto len = width * height;
   auto step = len / n_threads;
 
-  auto counter = 0;
   auto work_unit = vector<rt_data>();
   auto work_units = vector<decltype(work_unit)>();
 
+  // use same ray data for each sample. Should be placed
+  // inside loop if motion blur is to be emulated
   for (auto i = 0; i < width; ++i) {
     for (auto j = 0; j < height; ++j) {
       auto res = rt_data();
@@ -324,33 +327,75 @@ void rayTrace()
 
   auto results = vector<future<vector<rt_data>>>();
 
-  cout << "work units size " << work_units.size() << endl;
-  for (auto &unit: work_units) {
-    results.push_back(
-        raycast_async([](auto &i) {
-          i.color = castRay(i.rays.start,
-                            i.rays.dir,
-                            0, max_rt_depth, nullptr);
-          return i;
-        }, unit));
-  }
+  using namespace std;
+  auto rng = default_random_engine(random_device()());
 
-  for (auto &fut: results) {
-    auto unit = fut.get();
-    for (auto const &data: unit) {
+  for (size_t s=0; s<max_samples; ++s) {
 
-      auto idx = data.j * width + data.i;
-      auto buff = &buffer[idx * 4];
+    cout << "sample " << s << "of" << max_samples << "\n" <<
+        "work units size " << work_units.size() << "\n";
 
-      buff[0] = static_cast<uint8_t>(data.color.x * 255);
-      buff[1] = static_cast<uint8_t>(data.color.y * 255);
-      buff[2] = static_cast<uint8_t>(data.color.z * 255);
-      buff[3] = static_cast<uint8_t>(data.color.w * 255);
+
+    auto light_locs = scene.light_locations;
+    auto std_dev = 1.0;
+
+    for (auto &l: scene.light_locations) {
+      auto dist_x = normal_distribution<float>(l.x, std_dev);
+      auto dist_y = normal_distribution<float>(l.y, std_dev);
+      auto dist_z = normal_distribution<float>(l.z, std_dev);
+
+      l = vec4(dist_x(rng), dist_y(rng), dist_z(rng), l.w);
     }
+
+
+
+    for (auto &unit: work_units) {
+      results.push_back(
+          raycast_async([](auto &i) {
+            i.color = castRay(i.rays.start,
+                              i.rays.dir,
+                              0, max_rt_depth, nullptr);
+            return i;
+          }, unit));
+    }
+
+    for (auto &fut: results) {
+      auto unit = fut.get();
+      for (auto const &data: unit) {
+
+        auto idx = data.j * width + data.i;
+        auto buff = &buffer[idx * 4];
+        auto &color_to_write = color_buffer[idx];
+
+        // get weighted average of samples
+        if (s > 0) {
+          auto sum_color = (color_buffer[idx] * float(s) + data.color) ;
+          auto mean_color = sum_color/float(s + 1);
+          color_buffer[idx] = mean_color;
+
+        } else {
+          color_buffer[idx] = data.color;
+        }
+
+
+
+        buff[0] = static_cast<uint8_t>((color_to_write.x) * 255);
+        buff[1] = static_cast<uint8_t>((color_to_write.y) * 255);
+        buff[2] = static_cast<uint8_t>((color_to_write.z) * 255);
+        buff[3] = static_cast<uint8_t>((color_to_write.w) * 255);
+      }
+    }
+
+
+    write_image(out_file_name, &buffer[0], width, height, 4);
+    results.clear();
+
+    scene.light_locations = light_locs;
+
+
   }
 
 
-  write_image(out_file_name, &buffer[0], width, height, 4);
 
 }
 
@@ -796,7 +841,7 @@ void keyboard(unsigned char key, int x, int y)
 
     case 'r': {
       fprintf(stderr, "raytracing\n");
-      auto rt_timer = sls::timeit(rayTrace);
+      auto rt_timer = sls::timeit(rayTrace, 100);
       cout
       << "\nperformed in "
       << chrono::duration_cast<chrono::milliseconds>(rt_timer).count() <<

@@ -13,7 +13,6 @@
 #include <array>
 #include "common/Angel.h"
 #include "types.h"
-#include <glm/glm.hpp>
 
 namespace sls {
 

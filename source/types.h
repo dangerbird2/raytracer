@@ -106,6 +106,19 @@ public:
     return self;
   }
 
+  static Material bottle_glass()
+  {
+    auto self = glass();
+    self.k_transmittance = 0.8;
+    self.color = vec4(0.2, 0.9, 0.9, 1.0);
+    self.k_diffuse = 0.2;
+    self.k_specular = 0.1;
+    self.k_reflective = 0.0;
+    self.k_refraction = 1.2;
+
+    return self;
+  }
+
   static Material wall_a()
   {
     auto self = Material();
@@ -168,7 +181,6 @@ public:
   }
 
 };
-
 
 
 }
