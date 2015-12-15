@@ -52,8 +52,9 @@
 namespace Angel {
 
 //  Helper function to load vertex and fragment shader files
-GLuint InitShader( const char* vertexShaderFile,
-		   const char* fragmentShaderFile );
+GLuint InitShader(const char *vertexShaderFile,
+                  const char *fragmentShaderFile,
+                  char const *uniform_header_file = nullptr);
 
 //  Defined constant for when numbers are too small to be used in the
 //    denominator of a division operation.  This is only used if the

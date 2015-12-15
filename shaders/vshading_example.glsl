@@ -1,3 +1,4 @@
+
 attribute  vec4 vPosition;
 attribute  vec3 vNormal;
 attribute  vec2 vTexCoord;
@@ -16,6 +17,8 @@ uniform vec4 AmbientProducts[SLS_MAX_LIGHTS];
 uniform vec4 DiffuseProducts[SLS_MAX_LIGHTS];
 uniform vec4 SpecularProducts[SLS_MAX_LIGHTS];
 uniform vec4 LightPositions[SLS_MAX_LIGHTS];
+
+uniform vec4 light_powers[SLS_MAX_LIGHTS];
 
 uniform int n_lights;
 

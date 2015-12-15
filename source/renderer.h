@@ -34,8 +34,15 @@ Angel::vec3 reflected_ray(sls::Scene
 
 
 vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj, vec4 const &intersect_point,
-                            vec3 normal_sceneview,
-                            vec4 env_reflection = vec4(0.0, 0.0, 0.0, 0.0));
+                            vec3 normal_sceneview, vec4 env_reflection, vec4 env_refraction);
+
+
+Ray get_reflection_ray(vec3 const &intersection,
+                       vec3 const &incident,
+                       vec3 const &normal);
+
+Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3 const &incident, vec3 const &normal,
+                       float eta);
 
 }
 

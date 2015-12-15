@@ -44,7 +44,10 @@ bool shadow_ray_unblocked(sls::Scene const &scene,
 
   auto shadow_ray = Ray{intersect_point, dir};
   for (auto const &i: scene.objects) {
-    if (i != obj) {
+    auto can_shadow =
+        ((i->target & sls::TargetRayTracer) == sls::TargetRayTracer);
+
+    if (i != obj && can_shadow) {
       auto t = i->intersect_t(shadow_ray);
       if (t >= 1e-7 && t < length(dir)) {
         return false;
@@ -62,31 +65,12 @@ vec3 reflected_ray(sls::Scene scene,
   return vec3(0.0, 0.0, 0.0);
 }
 
-/*
-auto imgui_setup() -> ImGuiIO
-{
-
-  auto io = ImGui::GetIO();
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-  io.DisplaySize = ImVec2(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-#pragma GCC diagnostic pop
-  uint8_t *pixels;
-  int width, height;
-  io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-
-  return io;
-}
- */
-vec4 shade_ray_intersection(Scene const &scene,
-                            std::shared_ptr<SceneObject> obj,
-                            vec4 const &intersect_point,
-                            vec3 normal_sceneview, vec4 env_reflection)
+vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj, vec4 const &intersect_point,
+                            vec3 normal_sceneview, vec4 env_reflection, vec4 env_refraction)
 {
   using namespace Angel;
 
-  auto color = vec4();
+  auto color = vec4(0.0, 0.0, 0.0, 1.0);
 
   auto name = obj->name;
   auto valid_reflection = true;
@@ -100,21 +84,19 @@ vec4 shade_ray_intersection(Scene const &scene,
   if (!valid_reflection) { // TODO test for invalid reflection
     color = vec3(0, 0, 0);
   } else { // simple local reflectance
-
-    auto const n_lights = std::min(scene.light_locations.size(), scene.light_colors.size());
-    assert(n_lights >= 0);
+    auto n_lights = scene.n_lights();
 
     for (auto i = 0; i < n_lights; ++i) {
-      auto light_location = scene.light_locations[0];
+      auto light_location = scene.light_locations[i];
+      auto const &l_color = scene.light_colors[i];
+
       auto l_pos = vec3();
       if (light_location.w == 0) {
         l_pos = normalize(xyz(light_location));
       } else {
-        l_pos = normalize(xyz(scene.camera_modelview * (light_location - intersect_point)));
+        l_pos = normalize(xyz(scene.camera_modelview * light_location - intersect_point));
       }
 
-
-      auto const &l_color = scene.light_colors[i];
 
       auto ambient = mtl.ambient * mtl.k_ambient * l_color.ambient_color;
 
@@ -128,6 +110,7 @@ vec4 shade_ray_intersection(Scene const &scene,
         color.w = mtl.color.w;
         return color;
       }
+
       auto diffuse = l_color.diffuse_color * mtl.color * mtl.k_diffuse * kd;
 
       auto eye = vec3(normalize(-xyz(intersect_point)));
@@ -145,14 +128,42 @@ vec4 shade_ray_intersection(Scene const &scene,
 
       if (nearlyEqual(kd, 0.0, 1e-7)) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
 
-      color = ambient + diffuse + specular;
+      auto refraction = mtl.k_diffuse * mtl.k_transmittance * env_refraction;
+
+      color += (ambient + diffuse + specular + refraction);
     }
 
-    color.w = obj->material.color.w;
   }
 
   return color;
 }
+
+Ray get_reflection_ray(vec3 const &intersection, vec3 const &incident, vec3 const &normal)
+{
+  return sls::Ray(vec4(intersection, 1.0),
+                  -vec4(normalize(reflect(incident, normal)), 0.0));
+}
+
+Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3 const &incident, vec3 const &normal,
+                       float eta)
+{
+
+  auto res = Ray();
+  auto out_of_medium = dot(normalize(incident), normalize(normal)) > 0.0; // ray is acute to outer normal
+  const auto max_depth = 3;
+
+
+  vec3 refraction_dir = normalize(refract(incident, normal, eta));
+  res = Ray(vec4(intersection, 1.0), vec4(refraction_dir, 0.0));
+
+  if (isnan(refraction_dir.x)) { // past critical angle. Reflect
+    res = get_reflection_ray(intersection, incident, normal);
+    return res;
+  }
+
+  return res;
+}
+
 }
 
 

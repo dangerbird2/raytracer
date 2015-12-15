@@ -115,6 +115,10 @@ Angel::vec2 xy(ANGEL_VEC const &v)
 
 //---------------------------------geometric functions---------------------------------------
 
+/**
+ * @brief Reflect function based off the built-in GLSL function.
+ * @detail The output vector has the same signness as in glsl
+ */
 template<typename ANGEL_VEC>
 static
 ANGEL_VEC reflect(ANGEL_VEC const &incident, ANGEL_VEC const &normal)
@@ -123,6 +127,30 @@ ANGEL_VEC reflect(ANGEL_VEC const &incident, ANGEL_VEC const &normal)
   const auto cos_theta = dot(-normal, incident);
   return  incident - 2.0 * cos_theta  * normal ;
 }
+
+/**
+ * @brief Refracts an incident vector given a number and
+ * $eta = \frac{index_1}{index_2}$
+ */
+template<typename ANGEL_VEC, typename T_REAL=float>
+static
+ANGEL_VEC refract(ANGEL_VEC const &incident,
+                  ANGEL_VEC const &normal,
+                  T_REAL const &eta)
+{
+  using namespace Angel;
+
+  auto c = dot(normal, incident);
+  auto k = 1.0 - (eta * eta) * (1.0 - (c * c));
+  if (k < 0.0) {
+    // past critical angle, refraction vector is imaginary
+    return ANGEL_VEC(NAN); // isnan(result.x) indicates past critical angle
+  } else {
+    return eta * incident - (eta * c + sqrtf(k)) * normal;
+  }
+
+}
+
 
 
 //---------------------------------intersections---------------------------------------

@@ -35,7 +35,7 @@ mat4 const &SceneObject::modelview() const
 
 //---------------------------------sphere intersections---------------------------------------
 
-double UnitSphere::intersect_t(Ray const &ray)
+double UnitSphere::intersect_t(Ray const &ray) const
 {
   using namespace Angel;
   auto const &mv = modelview();
@@ -45,16 +45,43 @@ double UnitSphere::intersect_t(Ray const &ray)
   return t;
 }
 
-Intersection UnitSphere::intersect(Ray const &ray)
+Intersection UnitSphere::intersect(Ray const &ray) const
 {
   auto t = intersect_t(ray);
   auto hitpoint = ray.start + t * ray.dir;
   return Intersection(t, normalize(xyz(normalview() * (modelview_inverse() * hitpoint))));
 }
 
+bool UnitSphere::on_surface(vec3 const &point) const
+{
+  auto origin = xyz(modelview() * vec4(0.0, 0.0, 0.0, 1.0));
+  auto from_origin = point - origin;
+
+  return nearlyEqual(length(from_origin), radius, 1e-7);
+}
+
+bool UnitSphere::inside(vec3 const &point) const
+{
+
+  auto origin = xyz(modelview() * vec4(0.0, 0.0, 0.0, 1.0));
+  auto from_origin = point - origin;
+
+  return length(from_origin) < radius;
+}
+
+
+vec3 UnitSphere::surface_normal(vec3 const &point) const
+{
+  auto p_object_view = modelview_inverse() * vec4(point, 1.0);
+
+  return Angel::normalize(xyz(p_object_view));
+}
+
+
+
 
 //---------------------------------plane intersections---------------------------------------
-Intersection Plane::intersect(Ray const &ray)
+Intersection Plane::intersect(Ray const &ray) const
 {
   using namespace Angel;
   auto mvi = modelview_inverse();
@@ -66,6 +93,7 @@ Intersection Plane::intersect(Ray const &ray)
 
   return Intersection(t, xyz(normalview() * vec4(0.0, 0.0, 1.0, 0.0)));
 }
+
 
 
 }
