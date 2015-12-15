@@ -183,10 +183,9 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
     Intersection inter;
     vec4 hit_point;
   };
-  auto hits = vector<obj_hit_t>();
-  hits.reserve(scene.objects.size());
 
-  auto t_min = NAN;
+  auto hit_found = false;
+  auto nearest_hit = obj_hit_t();
 
   // iterate one time to get maximum depth
   // for ray
@@ -194,39 +193,36 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
     if ((obj->target & sls::TargetRayTracer) != sls::TargetRayTracer) {
       continue;
     }
+
+
     auto intersection = obj->intersect(ray_viewspace);
     auto hit_point = p0 + intersection.t * dir;
-
     if (intersection.t >= 0) {
-      hits.push_back(obj_hit_t{obj, intersection, hit_point});
 
-      t_min = isnan(t_min) ? intersection.t : t_min;
-      t_min = fmin(t_min, intersection.t);
+      auto hit = obj_hit_t{obj, intersection, hit_point};
+
+      if (!hit_found) {
+        hit_found = true;
+        nearest_hit = hit;
+      } else if (intersection.t < nearest_hit.inter.t){
+        nearest_hit = hit;
+      }
     }
   }
 
-  if (isnan(t_min)) {
-    t_min = 0.0;
-  }
-  for (obj_hit_t const &hit : hits) {
 
-
-    auto const &obj = hit.obj;
-    auto const &intersection = hit.inter;
+  if (hit_found) {
+r
+    auto const &obj = nearest_hit.obj;
+    auto const &intersection = nearest_hit.inter;
 
 
     auto t = intersection.t;
     auto normal = normalize(intersection.normal);
     auto obj_name = obj->name;
 
-    // check if point is objstructed by another object
-    auto depth_test = t < t_min || nearlyEqual(t, t_min, 1e-7);
 
-    if (t < 0 || !depth_test) {
-      continue;
-    }
-
-    auto hit_viewspace = hit.hit_point;
+    auto hit_viewspace = nearest_hit.hit_point;
 
     auto reflection = vec4(0.0, 0.0, 0.0, 0.0);
     auto transmitted = vec4(0.0, 0.0, 0.0, 0.0);
@@ -277,7 +273,7 @@ void rayTrace()
 
   using namespace sls;
 
-#if 0
+#if 1
   auto width = window_width;
   auto height = window_height;
 #else
@@ -508,12 +504,14 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   gold_ball->name = "gold_ball";
   scene.objects.push_back(gold_ball);
 
+
   r = 0.3;
-  mv = Angel::Translate(0.1, -box_width + r, 0.2) * Angel::Scale(r, r, r);
+  mv = Translate(0.1, -box_width + r, 0.2) * Scale(r, r, r);
 
   auto clear_ball =
       make_shared<UnitSphere>(Material::glass(), mv, &gl_mesh);
   scene.objects.push_back(clear_ball);
+
 
 
   auto plane = std::make_shared<UnitSphere>(Material::wall_white(),
