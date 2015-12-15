@@ -82,7 +82,7 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
 
 
   if (!valid_reflection) { // TODO test for invalid reflection
-    color = vec3(0, 0, 0);
+    return env_refraction;
   } else { // simple local reflectance
     auto n_lights = scene.n_lights();
 
@@ -92,7 +92,7 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
 
       auto l_pos = vec3();
       if (light_location.w == 0) {
-        l_pos = normalize(xyz(light_location));
+        l_pos = normalize(xyz(scene.camera_modelview * light_location));
       } else {
         l_pos = normalize(xyz(scene.camera_modelview * light_location - intersect_point));
       }
@@ -104,11 +104,12 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
       auto kd = fmax(dot(l_dir, normal), 0.0);
 
       auto const unblocked =
-          shadow_ray_unblocked(scene, obj, vec4(l_dir, light_location.w), intersect_point);
+          shadow_ray_unblocked(scene,
+                               obj,
+                               vec4(l_dir, light_location.w), intersect_point);
       if (!unblocked || kd <= 0.0) {
-        color = ambient;
-        color.w = mtl.color.w;
-        return color;
+        color += ambient;
+        continue;
       }
 
       auto diffuse = l_color.diffuse_color * mtl.color * mtl.k_diffuse * kd;
@@ -128,14 +129,20 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
 
       if (nearlyEqual(kd, 0.0, 1e-7)) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
 
-      auto refraction = mtl.k_diffuse * mtl.k_transmittance * env_refraction;
+      auto refraction = vec4(0.0, 0.0, 0.0, 0.0);
+      if (mtl.k_transmittance > 0.0) {
+        refraction = mtl.color * mtl.k_transmittance * env_refraction;
+      }
 
       color += (ambient + diffuse + specular + refraction);
     }
 
   }
 
-  return color;
+  color.w = mtl.color.w;
+
+
+  return clamp(color, 0.0, 1.0);
 }
 
 Ray get_reflection_ray(vec3 const &intersection, vec3 const &incident, vec3 const &normal)
@@ -160,6 +167,9 @@ Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3
     res = get_reflection_ray(intersection, incident, normal);
     return res;
   }
+
+  auto out = obj->intersect(res);
+
 
   return res;
 }

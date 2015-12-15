@@ -212,5 +212,6 @@ struct Plane : public SceneObject {
   Intersection intersect(Ray const &ray) const override;
 };
 
+
 }
 #endif //RAYTRACER_SCENE_H

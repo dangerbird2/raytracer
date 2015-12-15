@@ -77,7 +77,7 @@ public:
   float k_reflective = 0.0;
 
   float k_transmittance = 0.0;
-  float k_ambient = 1.0;
+  float k_ambient = 0.1;
   /**
    * brief specular phong exponent (shininess)
    */
@@ -87,7 +87,44 @@ public:
   /**
    * brief index of refraction
    */
-  float k_refraction = 1.53; // glass
+  float k_refraction = 1.53; // diamond
+  //---------------------------------material prefabs---------------------------------------
+  static Material glass(){
+    auto self = Material();
+
+
+
+    self.k_specular = 0.1;
+    self.k_reflective = 0.1;
+    self.k_diffuse = 0.0;
+    self.k_transmittance = 1.0;
+    self.k_refraction = 1.3;
+
+    return self;
+  }
+
+  static Material wall_a(){
+    auto self = Material();
+
+    self.color = vec4(1.0, 0.0, 0.0, 1.0);
+
+    self.shininess = 2.0;
+    self.k_specular = 0.1;
+    self.k_reflective = 0.0;
+    self.k_diffuse = 1.0;
+    self.k_transmittance = 0.0;
+
+    return self;
+  }
+
+  static Material wall_b() {
+    auto self = wall_a();
+
+    self.color = vec4(0.0, 1.0, 1.0, 1.0);
+
+
+    return self;
+  }
 
 };
 

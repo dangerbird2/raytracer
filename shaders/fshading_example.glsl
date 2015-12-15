@@ -28,6 +28,9 @@ varying vec2 texCoord;
 
 void main()
 {
+  if (DiffuseProducts[0].w < 0.1) {
+    discard;
+  }
 
   vec4 color_sum = vec4(0.0, 0.0, 0.0, 1.0);
 

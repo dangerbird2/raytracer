@@ -146,9 +146,9 @@ ANGEL_VEC refract(ANGEL_VEC const &incident,
     // past critical angle, refraction vector is imaginary
     return ANGEL_VEC(NAN); // isnan(result.x) indicates past critical angle
   } else {
-    return eta * incident - (eta * c + sqrtf(k)) * normal;
+    auto res = eta * incident - (eta * c + sqrtf(k)) * normal;
+    return res;
   }
-
 }
 
 
