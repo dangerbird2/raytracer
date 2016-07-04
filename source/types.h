@@ -97,8 +97,8 @@ public:
     auto self = Material();
 
 
-    self.k_specular = 0.1;
-    self.k_reflective = 0.1;
+    self.k_specular = 0.01;
+    self.k_reflective = 0.01;
     self.k_diffuse = 0.0;
     self.k_transmittance = 1.0;
     self.k_refraction = 1.15;
@@ -114,7 +114,7 @@ public:
     self.k_diffuse = 0.2;
     self.k_specular = 0.1;
     self.k_reflective = 0.0;
-    self.k_refraction = 1.2;
+    self.k_refraction = 0.0;
 
     return self;
   }
@@ -125,8 +125,9 @@ public:
 
     self.color = vec4(1.0, 0.0, 0.0, 1.0);
 
-    self.shininess = 2.0;
-    self.k_specular = 0.0;
+    self.shininess = 50.0;
+    self.k_specular = 0.9;
+    self.specular = self.color;
     self.k_reflective = 0.0;
     self.k_diffuse = 1.0;
     self.k_transmittance = 0.0;
@@ -139,7 +140,7 @@ public:
     auto self = wall_a();
 
     self.color = vec4(0.0, 1.0, 1.0, 1.0);
-
+    self.specular = self.color;
 
     return self;
   }
@@ -147,6 +148,8 @@ public:
   static Material wall_white()
   {
     auto self = Material();
+
+    self.specular = 0.1;
 
 
     return self;

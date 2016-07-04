@@ -41,8 +41,7 @@ Ray get_reflection_ray(vec3 const &intersection,
                        vec3 const &incident,
                        vec3 const &normal);
 
-Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3 const &incident, vec3 const &normal,
-                       float eta);
+Ray get_refraction_ray(vec3 intersection, vec3 const &incident, vec3 const &normal, float eta);
 
 }
 

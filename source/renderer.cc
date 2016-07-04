@@ -158,8 +158,7 @@ Ray get_reflection_ray(vec3 const &intersection, vec3 const &incident, vec3 cons
                   -vec4(normalize(reflect(incident, normal)), 0.0));
 }
 
-Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3 const &incident, vec3 const &normal,
-                       float eta)
+Ray get_refraction_ray(vec3 intersection, vec3 const &incident, vec3 const &normal, float eta)
 {
 
   auto res = Ray();
@@ -175,7 +174,6 @@ Ray get_refraction_ray(std::shared_ptr<SceneObject> obj, vec3 intersection, vec3
     return res;
   }
 
-  auto out = obj->intersect(res);
 
 
   return res;

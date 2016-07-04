@@ -5,6 +5,7 @@
 //    variables.  Vertex positions and normals are sent after each
 //    rotation.
 
+#include <cstdlib>
 #include "Angel.h"
 #include "SourcePath.h"
 #include "Trackball.h"
@@ -16,13 +17,38 @@
 #include "renderer.h"
 
 #include "async-tools.h"
+#include "scene.h"
 
 #include <random>
+#include <atomic>
+
+
+struct RTWorkFlag {
+  std::atomic<bool> is_raytracing;
+  std::atomic<bool> signal_quit_raytracing;
+  std::thread thread;
+};
+
+
+struct RTConfig {
+  bool ss_antialias = false;
+  int supersample_factor = 2;
+  int width = 1920;
+  int height = 1080;
+
+  bool use_window_size = false;
+};
 
 void setup_scene(vec4 const &material_diffuse,
-                 vec4 const &material_ambient, vec4 const &material_specular);
+                 vec4 const &material_ambient,
+                 vec4 const &material_specular);
 
 vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth = 10, std::shared_ptr<sls::SceneObject> obj = nullptr);
+
+void bind_viewport(int pInt[4]);
+
+std::vector<std::vector<sls::rt_data>> get_rt_work(int width, int height, int n_threads);
+
 
 vec4 castRay(sls::Ray const &ray, size_t depth, size_t max_depth = 10, std::shared_ptr<sls::SceneObject> obj = nullptr)
 {
@@ -39,13 +65,13 @@ using point4 = Angel::vec4;
 
 static sls::CommandLineArgs app_args;
 static std::string out_file_name;
+static std::thread::id main_id;
 
 //---------------------------------opengl info---------------------------------------
 int window_width, window_height;
 
 bool render_line;
 Mesh sphere_mesh;
-GLuint buffer_object;
 
 GLuint vPosition, vNormal, vTexCoord;
 
@@ -89,6 +115,7 @@ float ortho_x, ortho_y;
 /* current scale factor */
 static float scalefactor;
 
+RTWorkFlag rt_flags;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -97,13 +124,18 @@ sls::Ray findRay(GLdouble x,
                  int width,
                  int height)
 {
+  static std::mutex locker;
 
   y = height - y;
   GLdouble modelViewMatrix[16];
   GLdouble projectionMatrix[16];
   int viewport[4];
 
-  glGetIntegerv(GL_VIEWPORT, viewport);
+  locker.lock();
+
+  bind_viewport(viewport);
+
+  locker.unlock();
   float aspect = viewport[2] / float(viewport[3]);
   viewport[2] = width;
   viewport[3] = width / aspect;
@@ -139,6 +171,29 @@ sls::Ray findRay(GLdouble x,
   return sls::Ray(ray_origin, ray_dir);
 }
 
+
+/**
+ * used to querry GL_VIEWPORT from multiple threads
+ */
+void bind_viewport(int pInt[4])
+{
+  static int viewport[4];
+  auto tid = std::this_thread::get_id();
+  static std::mutex mtx;
+  if (!pInt && (tid == main_id)) {
+    glGetIntegerv(GL_VIEWPORT, viewport);
+  } else if (pInt) {
+    mtx.lock();
+    memcpy((void *) pInt, (void *) viewport, sizeof(int) * 4);
+    mtx.unlock();
+
+  } else {
+    throw std::runtime_error("you must bind GL_VIEWPORT from the main thread");
+
+  };
+
+}
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 void castRayDebug(vec4 p0, vec4 dir)
@@ -171,7 +226,6 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
 
   auto color = clear_color;
 
-
   if (depth > max_depth) {
     return clear_color;
   }
@@ -201,7 +255,7 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
       if (!hit_found) {
         hit_found = true;
         nearest_hit = hit;
-      } else if (intersection.t < nearest_hit.inter.t){
+      } else if (intersection.t < nearest_hit.inter.t) {
         nearest_hit = hit;
       }
     }
@@ -236,8 +290,7 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
       auto inner_ior = inside_obj ? obj->material.k_refraction : scene.space_k_refraction;
 
 
-      auto refraction_ray = get_refraction_ray(obj,
-                                               xyz(hit_viewspace),
+      auto refraction_ray = get_refraction_ray(xyz(hit_viewspace),
                                                xyz(dir),
                                                normal,
                                                inner_ior / outer_ior);
@@ -268,22 +321,34 @@ vec4 castRay(vec4 p0, vec4 dir, size_t depth, size_t max_depth, std::shared_ptr<
  * @detail allows multiple sampling for diffuse path tracing or
  * similar algorithms, writing to image each sample for instant feedback
  */
-void rayTrace(size_t max_samples=1)
+void rayTrace(size_t max_samples = 1, RTConfig cf = RTConfig())
 {
   using namespace std;
   using namespace sls;
+  rt_flags.is_raytracing = true;
 
-#if 1
-  auto width = window_width;
-  auto height = window_height;
-#else
-  auto width = 1920;
-  auto height = 1080;
+  auto width = cf.width;
+  auto height = cf.height;
 
-#endif
+
+  if (cf.use_window_size) {
+    width = window_width;
+    height = window_height;
+  }
+
+
+  auto ss_factor = cf.ss_antialias ? max(cf.supersample_factor, 1) : 1;
+  auto supersample_width = width * ss_factor;
+  auto supersample_height = height * ss_factor;
+
+  assert(ss_factor > 0);
+
+  cout << "rendering supersamples " << supersample_width << " * " << supersample_height << "\n";
 
   auto buffer =
       vector<uint8_t>(width * height * 4);
+
+  auto supersamples = vector<color4>(supersample_width * supersample_height);
   auto color_buffer =
       vector<color4>(width * height);
 
@@ -291,13 +356,145 @@ void rayTrace(size_t max_samples=1)
 
   // params
   auto const n_threads = 20;
-  auto const max_rt_depth = 3;
+  auto const max_rt_depth = 6;
+
+  auto work_units = get_rt_work(supersample_width, supersample_height, n_threads);
+
+  auto results = vector<future<vector<rt_data>>>();
+
+  using namespace std;
+  auto rng = default_random_engine(random_device()());
+
+  auto sample = 0;
+  for (sample = 0; sample < max_samples; ++sample) {
+    if (rt_flags.signal_quit_raytracing) {
+      rt_flags.signal_quit_raytracing = false;
+      break;
+    }
 
 
+    auto light_locs = scene.light_locations;
+    auto std_dev = 0.1;
+
+    for (auto &l: scene.light_locations) {
+      auto dist_x = normal_distribution<float>(l.x, std_dev);
+      auto dist_y = normal_distribution<float>(l.y, std_dev);
+      auto dist_z = normal_distribution<float>(l.z, std_dev);
+
+      l = vec4(dist_x(rng), dist_y(rng), dist_z(rng), l.w);
+    }
+
+
+    for (auto &unit: work_units) {
+      results.push_back(
+          raycast_async([](auto &i) {
+            i.color = castRay(i.rays.start,
+                              i.rays.dir,
+                              0, max_rt_depth, nullptr);
+            return i;
+          }, unit));
+    }
+
+
+    for (auto &fut: results) {
+      auto unit = fut.get();
+      for (auto const &data: unit) {
+
+        auto idx = data.j * supersample_width + data.i;
+        supersamples[idx] = data.color;
+      }
+      for (auto j = 0; j < height; ++j) {
+        for (auto i = 0; i < width; ++i) {
+
+          auto idx = j * width + i;
+          auto const n_subpixels = ss_factor * 4;
+
+          // calculate range to take subpixels
+          auto dist = poisson_distribution<int>(ss_factor / 2);
+
+          auto ss_j_min = j * ss_factor;
+          auto ss_j_max = ss_j_min + ss_factor;
+
+          auto ss_i_min = i * ss_factor;
+          auto ss_i_max = ss_i_min + ss_factor;
+
+          color4 acc = vec4(0.0, 0.0, 0.0, 0.0);
+
+          if (ss_factor > 1) {
+
+
+            for (auto k = 0; k < n_subpixels; ++k) {
+              // poisson ss_aa
+
+              auto sample_i = clamp(dist(rng), 0, ss_factor - 1);
+              auto sample_j = clamp(dist(rng), 0, ss_factor - 1);
+
+              auto ii = ss_i_min + sample_i;
+              auto jj = ss_j_min + sample_j;
+
+              auto ss_idx = jj * supersample_width + ii;
+
+              acc += supersamples[ss_idx];
+
+            }
+
+            acc /= float(n_subpixels);
+
+
+          } else if (ss_factor == 1) {
+            acc = supersamples[j * supersample_width + i];
+          }
+
+          auto buff = &buffer[idx * 4];
+          auto const &color = acc;
+
+
+          // get weighted average of samples
+          if (sample > 0) {
+            auto sum_color = (color_buffer[idx] * float(sample) + color);
+            auto mean_color = sum_color / float(sample + 1);
+            color_buffer[idx] = mean_color;
+
+          } else {
+            color_buffer[idx] = color;
+          }
+
+          auto &color_to_write = color_buffer[idx];
+
+
+          buff[0] = static_cast<uint8_t>((color_to_write.x) * 255);
+          buff[1] = static_cast<uint8_t>((color_to_write.y) * 255);
+          buff[2] = static_cast<uint8_t>((color_to_write.z) * 255);
+          buff[3] = static_cast<uint8_t>((color_to_write.w) * 255);
+        }
+      }
+
+
+    }
+
+
+    write_image(out_file_name, &buffer[0], width, height, 4);
+    results.clear();
+
+    scene.light_locations = light_locs;
+  }
+
+  cout << "\ntraced " << sample << ((sample > 1) ? " samples.\n" : " sample.\n");
+  rt_flags.is_raytracing = false;
+
+
+}
+
+
+std::vector<std::vector<sls::rt_data>> get_rt_work(int width, int height, int n_threads)
+{
+  using namespace std;
+  using namespace sls;
   auto len = width * height;
   auto step = len / n_threads;
 
   auto work_unit = vector<rt_data>();
+
   auto work_units = vector<decltype(work_unit)>();
 
   // use same ray data for each sample. Should be placed
@@ -325,110 +522,19 @@ void rayTrace(size_t max_samples=1)
     work_units.push_back(work_unit);
   }
 
-  auto results = vector<future<vector<rt_data>>>();
-
-  using namespace std;
-  auto rng = default_random_engine(random_device()());
-
-  for (size_t s=0; s<max_samples; ++s) {
-
-    cout << "sample " << s << "of" << max_samples << "\n" <<
-        "work units size " << work_units.size() << "\n";
-
-
-    auto light_locs = scene.light_locations;
-    auto std_dev = 1.0;
-
-    for (auto &l: scene.light_locations) {
-      auto dist_x = normal_distribution<float>(l.x, std_dev);
-      auto dist_y = normal_distribution<float>(l.y, std_dev);
-      auto dist_z = normal_distribution<float>(l.z, std_dev);
-
-      l = vec4(dist_x(rng), dist_y(rng), dist_z(rng), l.w);
-    }
-
-
-
-    for (auto &unit: work_units) {
-      results.push_back(
-          raycast_async([](auto &i) {
-            i.color = castRay(i.rays.start,
-                              i.rays.dir,
-                              0, max_rt_depth, nullptr);
-            return i;
-          }, unit));
-    }
-
-    for (auto &fut: results) {
-      auto unit = fut.get();
-      for (auto const &data: unit) {
-
-        auto idx = data.j * width + data.i;
-        auto buff = &buffer[idx * 4];
-        auto &color_to_write = color_buffer[idx];
-
-        // get weighted average of samples
-        if (s > 0) {
-          auto sum_color = (color_buffer[idx] * float(s) + data.color) ;
-          auto mean_color = sum_color/float(s + 1);
-          color_buffer[idx] = mean_color;
-
-        } else {
-          color_buffer[idx] = data.color;
-        }
-
-
-
-        buff[0] = static_cast<uint8_t>((color_to_write.x) * 255);
-        buff[1] = static_cast<uint8_t>((color_to_write.y) * 255);
-        buff[2] = static_cast<uint8_t>((color_to_write.z) * 255);
-        buff[3] = static_cast<uint8_t>((color_to_write.w) * 255);
-      }
-    }
-
-
-    write_image(out_file_name, &buffer[0], width, height, 4);
-    results.clear();
-
-    scene.light_locations = light_locs;
-
-
-  }
-
-
-
+  return work_units;
 }
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+//------------------------------------------------------------------------
+//---------------------------------scene setup
+//---------------------------------
 void init()
 {
   sphere_mesh.makeSubdivisionSphere(10);
 
+
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  // Create a vertex array object
-  GLuint vao;
-  glGenVertexArraysAPPLE(1, &vao);
-  glBindVertexArrayAPPLE(vao);
-
-  // Create and initialize a buffer object
-  glGenBuffers(1, &buffer_object);
-
-  glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
-  unsigned int vertices_bytes = sphere_mesh.vertices.size() * sizeof(vec4);
-  unsigned int normals_bytes = sphere_mesh.normals.size() * sizeof(vec3);
-  unsigned int uv_bytes = sphere_mesh.uvs.size() * sizeof(vec2);
-
-  glBufferData(GL_ARRAY_BUFFER, vertices_bytes + normals_bytes + uv_bytes, NULL,
-               GL_STATIC_DRAW);
-  unsigned int offset = 0;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, vertices_bytes, &sphere_mesh.vertices[0]);
-  offset += vertices_bytes;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, normals_bytes, &sphere_mesh.normals[0]);
-  offset += normals_bytes;
-  glBufferSubData(GL_ARRAY_BUFFER, offset, uv_bytes, &sphere_mesh.uvs[0]);
 
   std::string vshader = source_path + "/shaders/vshading_example.glsl";
   std::string fshader = source_path + "/shaders/fshading_example.glsl";
@@ -436,16 +542,6 @@ void init()
   program = InitShader(vshader.c_str(), fshader.c_str(), nullptr);
   // Load shaders and use the resulting shader program
   glUseProgram(program);
-
-  // set up vertex arrays
-  vPosition = glGetAttribLocation(program, "vPosition");
-  glEnableVertexAttribArray(vPosition);
-
-  vNormal = glGetAttribLocation(program, "vNormal");
-  glEnableVertexAttribArray(vNormal);
-
-  vTexCoord = glGetAttribLocation(program, "vTexCoord");
-  glEnableVertexAttribArray(vTexCoord);
 
 
   color4 light_ambient(1.0, 1.0, 1.0, 1.0);
@@ -459,6 +555,11 @@ void init()
   color4 ambient_product = light_ambient * material_ambient;
   color4 diffuse_product = light_diffuse * material_diffuse;
   color4 specular_product = light_specular * material_specular;
+
+
+  setup_scene(material_diffuse,
+              material_ambient, material_specular);
+
 
   light_unifs.ambient_prods = GLuint(glGetUniformLocation(program, "AmbientProducts"));
   light_unifs.diffuse_prods = GLuint(glGetUniformLocation(program, "DiffuseProducts"));
@@ -507,10 +608,6 @@ void init()
   render_line = false;
 
 
-  setup_scene(material_diffuse,
-              material_ambient, material_specular);
-
-
 }
 
 
@@ -537,15 +634,16 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   auto iron_diff = vec4(1.0, 0.9, 0.9, 1.0);
   auto iron_spec = vec4(1.0, 1.0, 1.0, 1.0);
 
-  auto gl_mesh = GLMesh();
-  gl_mesh.vbo = buffer_object;
-  gl_mesh.mesh = sphere_mesh;
+  auto gl_mesh = make_shared<GLMesh>(ref(sphere_mesh));
+  gl_mesh->initialize_buffers(GLuint(glGetAttribLocation(program, "vPosition")),
+                              GLuint(glGetAttribLocation(program, "vNormal")),
+                              GLuint(glGetAttribLocation(program, "vTexCoord")));
 
   r = 0.25;
   auto mv =
       Angel::Translate(0.6f, -box_width + r, -0.4f) * Angel::Scale(r, r, r);
   auto gold_ball =
-      make_shared<UnitSphere>(Material::gold(), mv, &gl_mesh);
+      make_shared<UnitSphere>(Material::gold(), mv, gl_mesh);
   gold_ball->name = "gold_ball";
   scene.objects.push_back(gold_ball);
 
@@ -554,24 +652,25 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
   mv = Translate(0.1, -box_width + r, 0.2) * Scale(r, r, r);
 
   auto clear_ball =
-      make_shared<UnitSphere>(Material::glass(), mv, &gl_mesh);
+      make_shared<UnitSphere>(Material::glass(), mv, gl_mesh);
+
+  clear_ball->name = "clear_ball";
   scene.objects.push_back(clear_ball);
 
 
-
   auto plane = std::make_shared<UnitSphere>(Material::wall_white(),
-                                            back_mv, &gl_mesh);
+                                            back_mv, gl_mesh);
   plane->name = "back";
   scene.objects.push_back(plane);
 
   // floor/ceil
 
   plane = std::make_shared<UnitSphere>(Material::wall_white(),
-                                       bottom_mv, &gl_mesh);
+                                       bottom_mv, gl_mesh);
   plane->name = "bottom";
   scene.objects.push_back(plane);
 
-  plane = std::make_shared<UnitSphere>(Material::wall_white(), top_mv, &gl_mesh);
+  plane = std::make_shared<UnitSphere>(Material::wall_white(), top_mv, gl_mesh);
   plane->name = "top";
   scene.objects.push_back(plane);
 
@@ -579,12 +678,12 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
 
 
 
-  plane = std::make_shared<UnitSphere>(Material::wall_a(), left_mv, &gl_mesh);
+  plane = std::make_shared<UnitSphere>(Material::wall_a(), left_mv, gl_mesh);
   plane->name = "left";
   scene.objects.push_back(plane);
 
 
-  plane = std::make_shared<UnitSphere>(Material::wall_b(), right_mv, &gl_mesh);
+  plane = std::make_shared<UnitSphere>(Material::wall_b(), right_mv, gl_mesh);
   plane->name = "right";
   scene.objects.push_back(plane);
 
@@ -606,7 +705,7 @@ void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient, vec
 
 
   auto dir_light_color = LightColor();
-  auto dir_light_loc = vec4(0.0, 0.5, 100.0, 0.0);
+  auto dir_light_loc = vec4(0.0, 0.5, 4.0, 0.0);
 
   dir_light_color.ambient_color = vec4(0.5, 0.5, 0.5, 1.0);
   dir_light_color.diffuse_color = vec4(0.5, 0.5, 0.5, 1.0);
@@ -704,7 +803,7 @@ void display(void)
     glUniformMatrix4fv(NormalMatrix, 1, GL_TRUE, transpose(invert(mv_object)));
 
 
-    if (obj->mesh) {
+    if (obj->mesh && obj->mesh->initialized) {
       obj->mesh->draw(vPosition, vNormal, vTexCoord);
     }
 
@@ -719,26 +818,29 @@ void display(void)
 void mouse(GLint button, GLint state, GLint x, GLint y)
 {
 
-  if (state == GLUT_UP) {
-    moving = scaling = panning = 0;
-    std::cout << x << "\t\t" << y << "\n";
-    auto ray = findRay(x, y, window_width, window_height);
-    castRayDebug(ray.start, ray.dir);
-    glutPostRedisplay();
-    return;
+  if (!rt_flags.is_raytracing) {
+    if (state == GLUT_UP) {
+      moving = scaling = panning = 0;
+      std::cout << x << "\t\t" << y << "\n";
+      auto ray = findRay(x, y, window_width, window_height);
+      castRayDebug(ray.start, ray.dir);
+      glutPostRedisplay();
+      return;
+    }
+
+    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+      scaling = 1;
+    } else if (glutGetModifiers() & GLUT_ACTIVE_ALT) {
+      panning = 1;
+    } else {
+      moving = 1;
+      trackball(lastquat, 0, 0, 0, 0);
+    }
+
+    beginx = x;
+    beginy = y;
   }
 
-  if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
-    scaling = 1;
-  } else if (glutGetModifiers() & GLUT_ACTIVE_ALT) {
-    panning = 1;
-  } else {
-    moving = 1;
-    trackball(lastquat, 0, 0, 0, 0);
-  }
-
-  beginx = x;
-  beginy = y;
   glutPostRedisplay();
 }
 
@@ -827,6 +929,10 @@ void keyboard(unsigned char key, int x, int y)
     case 033: // Escape Key
     case 'q':
     case 'Q':
+      if (rt_flags.thread.joinable()) {
+        rt_flags.signal_quit_raytracing = true;
+        rt_flags.thread.detach();
+      }
       exit(EXIT_SUCCESS);
       break;
     case ' ': {
@@ -840,13 +946,20 @@ void keyboard(unsigned char key, int x, int y)
     }
 
     case 'r': {
-      fprintf(stderr, "raytracing\n");
-      auto rt_timer = sls::timeit(rayTrace, 100);
-      cout
-      << "\nperformed in "
-      << chrono::duration_cast<chrono::milliseconds>(rt_timer).count() <<
-      "ms\n";
+      if (!rt_flags.is_raytracing) {
+        // set bind_viewport
+        bind_viewport(nullptr);
+
+        auto cf = RTConfig();
+
+        rt_flags.thread = std::thread(rayTrace, 100, cf);
+      } else {
+        rt_flags.signal_quit_raytracing = true;
+        cout << "raytracing in progress: will stop at end of next sample\n";
+
+      }
       break;
+
     }
 
 
@@ -881,6 +994,10 @@ void timer(int value)
 int main(int argc, char **argv)
 {
   app_args = sls::parse_args(argc, const_cast<char const **>(argv));
+  main_id = std::this_thread::get_id();
+
+  rt_flags.is_raytracing = false;
+  rt_flags.signal_quit_raytracing = false;
 
   if (app_args.argv.size() > 1) {
     out_file_name = app_args.argv[1];

@@ -139,6 +139,8 @@ ANGEL_VEC refract(ANGEL_VEC const &incident,
 {
   using namespace Angel;
 
+
+
   auto c = dot(normal, incident);
   auto k = 1.0 - (eta * eta) * (1.0 - (c * c));
   if (k < 0.0) {
