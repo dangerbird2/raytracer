@@ -1,0 +1,1614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="RAYTRACER"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\source\;CMake Files\source\common\;CMake Files\FreeImage3151\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rayTracer">
+				<Option output="/home/steve/projects/raytracer/cmake-build-debug/rayTracer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/steve/projects/raytracer/./source"/>
+					<Add directory="/home/steve/projects/raytracer/./source/common"/>
+					<Add directory="/home/steve/projects/raytracer/./shaders"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 rayTracer"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rayTracer/fast">
+				<Option output="/home/steve/projects/raytracer/cmake-build-debug/rayTracer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/steve/projects/raytracer/./source"/>
+					<Add directory="/home/steve/projects/raytracer/./source/common"/>
+					<Add directory="/home/steve/projects/raytracer/./shaders"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 rayTracer/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="FreeImage">
+				<Option output="/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/libFreeImage.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DOPJ_STATIC"/>
+					<Add option="-DLIBRAW_NODLL"/>
+					<Add option="-DLIBRAW_LIBRARY_BUILD"/>
+					<Add option="-DFREEIMAGE_LIB"/>
+					<Add option="-DNO_LCMS"/>
+					<Add directory="/home/steve/projects/raytracer/./source"/>
+					<Add directory="/home/steve/projects/raytracer/./source/common"/>
+					<Add directory="/home/steve/projects/raytracer/./shaders"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/DeprecationManager"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Half"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 FreeImage"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="FreeImage/fast">
+				<Option output="/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/libFreeImage.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DOPJ_STATIC"/>
+					<Add option="-DLIBRAW_NODLL"/>
+					<Add option="-DLIBRAW_LIBRARY_BUILD"/>
+					<Add option="-DFREEIMAGE_LIB"/>
+					<Add option="-DNO_LCMS"/>
+					<Add directory="/home/steve/projects/raytracer/./source"/>
+					<Add directory="/home/steve/projects/raytracer/./source/common"/>
+					<Add directory="/home/steve/projects/raytracer/./shaders"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/DeprecationManager"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Half"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread"/>
+					<Add directory="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 FreeImage/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/steve/projects/raytracer/cmake-build-debug/FreeImage3151/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/BitmapAccess.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/CacheFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ColorLookup.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion16_555.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion16_565.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion24.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion32.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion4.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Conversion8.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ConversionRGB16.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ConversionRGBF.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ConversionType.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/FreeImage.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/FreeImageIO.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/GetType.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Halftoning.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/J2KHelper.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/MemoryIO.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/MultiPage.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/NNQuantizer.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PSDParser.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PSDParser.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PixelAccess.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/Plugin.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginBMP.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginCUT.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginDDS.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginEXR.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginG3.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginGIF.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginHDR.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginICO.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginIFF.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginJ2K.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginJP2.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginJPEG.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginKOALA.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginMNG.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPCD.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPCX.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPFM.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPICT.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPNG.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPNM.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginPSD.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginRAS.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginRAW.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginSGI.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginTARGA.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginTIFF.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginWBMP.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginXBM.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/PluginXPM.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/TIFFLogLuv.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ToneMapping.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/WuQuantizer.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/ZLibInterface.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/tmoColorConvert.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/tmoDrago03.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/tmoFattal02.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImage/tmoReinhard05.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/BSplineRotate.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Background.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Channels.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/ClassicRotate.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Colors.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/CopyPaste.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Display.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Flip.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/JPEGTransform.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/MultigridPoissonSolver.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Rescale.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Resize.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/FreeImageToolkit/Resize.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jaricom.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcapimin.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcapistd.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcarith.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jccoefct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jccolor.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcdctmgr.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jchuff.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcinit.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcmainct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcmarker.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcmaster.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcomapi.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcparam.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcprepct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jcsample.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jctrans.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdapimin.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdapistd.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdarith.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdatadst.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdatasrc.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdcoefct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdcolor.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jddctmgr.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdhuff.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdinput.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdmainct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdmarker.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdmaster.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdmerge.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdpostct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdsample.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jdtrans.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jerror.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jerror.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jfdctflt.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jfdctfst.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jfdctint.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jidctflt.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jidctfst.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jidctint.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jmemansi.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jmemmgr.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jquant1.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jquant2.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/jutils.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdbmp.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdcolmap.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdgif.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdppm.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdrle.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdswitch.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/rdtarga.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/transupp.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/transupp.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/wrbmp.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/wrgif.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/wrppm.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/wrrle.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibJPEG/wrtarga.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_callback_xs.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_descr.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_descr.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_io.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_io.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_prc.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_prc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_chunk_xs.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_cms.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_cms.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_display.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_display.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_dither.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_dither.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_error.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_error.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_filter.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_filter.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_hlapi.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_jpeg.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_jpeg.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_object_prc.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_object_prc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_pixels.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_pixels.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_prop_xs.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_read.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_read.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_trace.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_trace.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_write.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_write.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_zlib.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibMNG/libmng_zlib.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/bio.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/bio.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/cio.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/cio.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/dwt.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/dwt.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/event.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/event.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/image.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/image.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/j2k.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/j2k.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/j2k_lib.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/j2k_lib.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/jp2.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/jp2.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/jpt.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/jpt.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/mct.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/mct.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/mqc.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/mqc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/openjpeg.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/openjpeg.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/pi.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/pi.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/raw.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/raw.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/t1.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/t1.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/t2.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/t2.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/tcd.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/tcd.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/tgt.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibOpenJPEG/tgt.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/png.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/png.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngerror.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngget.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngmem.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngpread.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngread.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngrio.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngrtran.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngrutil.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngset.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngtrans.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngwio.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngwrite.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngwtran.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibPNG/pngwutil.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite/internal/dcraw_common.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite/internal/dcraw_fileio.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite/internal/demosaic_packs.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite/src/libraw_c_api.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibRawLite/src/libraw_cxx.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_aux.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_close.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_codec.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_color.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_compress.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dir.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dir.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dirinfo.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dirread.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dirwrite.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_dumpmode.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_error.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_extension.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_fax3.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_fax3.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_fax3sm.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_flush.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_getimage.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_jbig.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_jpeg.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_luv.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_lzw.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_next.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_ojpeg.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_open.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_packbits.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_pixarlog.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_predict.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_predict.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_print.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_read.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_strip.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_swab.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_thunder.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_tile.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_version.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_warning.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_write.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/LibTIFF/tif_zip.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/Exif.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/FIRational.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/FIRational.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/FreeImageTag.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/FreeImageTag.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/IPTC.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/TagConversion.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/TagLib.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/Metadata/XTIFF.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Half/half.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Half/half.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex/IexBaseExc.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex/IexBaseExc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex/IexThrowErrnoExc.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Iex/IexThrowErrnoExc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfB44Compressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfB44Compressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfBoxAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfBoxAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCRgbaFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCRgbaFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChannelList.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChannelList.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChannelListAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChannelListAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChromaticities.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChromaticities.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChromaticitiesAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfChromaticitiesAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCompressionAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCompressionAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCompressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfCompressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfConvert.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfConvert.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfDoubleAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfDoubleAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfEnvmap.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfEnvmap.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfEnvmapAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfEnvmapAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFloatAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFloatAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFrameBuffer.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFrameBuffer.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFramesPerSecond.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfFramesPerSecond.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfHeader.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfHeader.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfHuf.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfHuf.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfIO.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfIO.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfInputFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfInputFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfIntAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfIntAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfKeyCode.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfKeyCode.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfKeyCodeAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfKeyCodeAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfLineOrderAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfLineOrderAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfLut.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfLut.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMatrixAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMatrixAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMisc.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMisc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMultiView.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfMultiView.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfOpaqueAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfOpaqueAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfOutputFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfOutputFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPizCompressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPizCompressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPreviewImage.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPreviewImage.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPreviewImageAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPreviewImageAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPxr24Compressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfPxr24Compressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRational.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRational.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRationalAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRationalAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRgbaFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRgbaFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRgbaYca.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRgbaYca.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRleCompressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfRleCompressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfScanLineInputFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfScanLineInputFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStandardAttributes.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStandardAttributes.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStdIO.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStdIO.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStringAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStringAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStringVectorAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfStringVectorAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTestFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTestFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfThreading.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfThreading.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTileDescriptionAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTileDescriptionAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTileOffsets.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTileOffsets.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledInputFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledInputFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledMisc.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledMisc.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledOutputFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledOutputFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledRgbaFile.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTiledRgbaFile.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTimeCode.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTimeCode.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTimeCodeAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfTimeCodeAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfVecAttribute.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfVecAttribute.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfVersion.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfVersion.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfWav.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfWav.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfZipCompressor.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmImf/ImfZipCompressor.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThread.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThread.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadMutex.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadMutex.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadMutexPosix.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadPool.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadPool.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadPosix.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadSemaphore.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadSemaphore.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadSemaphorePosix.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/IlmThread/IlmThreadSemaphorePosixCompat.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathBox.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathBox.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathColorAlgo.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathColorAlgo.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathFun.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathFun.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathMatrixAlgo.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathMatrixAlgo.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathRandom.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathRandom.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathShear.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathShear.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathVec.cpp">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/OpenEXR/Imath/ImathVec.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/adler32.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/compress.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/crc32.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/crc32.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/deflate.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/deflate.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/infback.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inffast.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inffast.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inflate.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inflate.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inftrees.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/inftrees.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/trees.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/trees.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/uncompr.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/zutil.c">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/Source/ZLib/zutil.h">
+			<Option target="FreeImage"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/shaders/fshading_example.glsl">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/shaders/vshading_example.glsl">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/Raytracer.cpp">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/async-tools.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common-math.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/Angel.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/CheckError.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/InitShader.cpp">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/ObjMesh.cpp">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/ObjMesh.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/SourcePath.cpp">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/SourcePath.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/Trackball.cpp">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/Trackball.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/mat.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/vec.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/image-utils.cc">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/image-utils.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/renderer.cc">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/renderer.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/scene.cc">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/scene.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/slsgl.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/types.h">
+			<Option target="rayTracer"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/source/common/SourcePath.cpp.in">
+			<Option virtualFolder="CMake Files\source\common\"/>
+		</Unit>
+		<Unit filename="/home/steve/projects/raytracer/FreeImage3151/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\FreeImage3151\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

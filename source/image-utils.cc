@@ -1,19 +1,17 @@
 /**
  * @file ${FILE}
- * @brief 
+ * @brief
  * @license ${LICENSE}
  * Copyright (c) 11/20/15, Steven
- * 
+ *
  **/
 #include "image-utils.h"
 #include "FreeImage.h"
-#include <pthread.h>
 #include <iostream>
-
+#include <pthread.h>
 
 bool write_image(const char *filename, const unsigned char *Src, int Width,
-                 int Height, int channels)
-{
+                 int Height, int channels) {
 
   FreeImage_Initialise();
 
@@ -28,8 +26,8 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
   if (fif == FIF_UNKNOWN) {
     std::cout << "IMAGE ERROR: Freewrite_image : "
-    << "failed to save " << filename
-    << " with FreeImage (reason: fif == FIF_UNKNOWN)";
+              << "failed to save " << filename
+              << " with FreeImage (reason: fif == FIF_UNKNOWN)";
     return false;
   }
 
@@ -39,7 +37,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
     if (!bitmap) {
       std::cout << "IMAGE ERROR: Freewrite_image : "
-      << "Cannot allocate memory\n";
+                << "Cannot allocate memory\n";
       return false;
     }
 
@@ -47,7 +45,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
     if (!bits) {
       std::cout << "IMAGE ERROR: Freewrite_image : "
-      << "Cannot allocate memory\n";
+                << "Cannot allocate memory\n";
       return false;
     }
 
@@ -64,7 +62,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
     if (!FreeImage_Save(fif, bitmap, filename, 0)) {
       FreeImage_Unload(bitmap);
       std::cout << "IMAGE ERROR: Freewrite_image : "
-      << "failed to save " << filename << " with FreeImage\n";
+                << "failed to save " << filename << " with FreeImage\n";
       return false;
     }
 
@@ -79,7 +77,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
       if (!bitmap) {
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "Cannot allocate memory\n";
+                  << "Cannot allocate memory\n";
         return false;
       }
 
@@ -87,7 +85,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
       if (!bits) {
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "Cannot allocate memory\n";
+                  << "Cannot allocate memory\n";
         return false;
       }
 
@@ -105,7 +103,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
       if (!FreeImage_Save(fif, bitmap, filename, 0)) {
         FreeImage_Unload(bitmap);
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "failed to save " << filename << " with FreeImage\n";
+                  << "failed to save " << filename << " with FreeImage\n";
         return false;
       }
 
@@ -114,13 +112,13 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
       return true;
 
     }
-      // RGBA
+    // RGBA
     else if (channels == 4) {
       FIBITMAP *bitmap = FreeImage_Allocate(Width, Height, 32, 0, 0, 0);
 
       if (!bitmap) {
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "Cannot allocate memory\n";
+                  << "Cannot allocate memory\n";
         return false;
       }
 
@@ -128,7 +126,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
 
       if (!bits) {
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "Cannot allocate memory\n";
+                  << "Cannot allocate memory\n";
         return false;
       }
 
@@ -147,7 +145,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
       if (!FreeImage_Save(fif, bitmap, filename, 0)) {
         FreeImage_Unload(bitmap);
         std::cout << "IMAGE ERROR: Freewrite_image : "
-        << "failed to save " << filename << " with FreeImage\n";
+                  << "failed to save " << filename << " with FreeImage\n";
         return false;
       }
 
@@ -157,8 +155,8 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
     } else {
       // not supported
       std::cout << "IMAGE ERROR: Freewrite_image : "
-      << "unsupported number of samples (" << channels
-      << ") for FreeImage\n";
+                << "unsupported number of samples (" << channels
+                << ") for FreeImage\n";
       return false;
     }
   }
@@ -168,8 +166,7 @@ bool write_image(const char *filename, const unsigned char *Src, int Width,
   return false;
 }
 
-bool write_image(const std::string &filename, const uint8_t *src,
-                 int width, int height, int channels)
-{
+bool write_image(const std::string &filename, const uint8_t *src, int width,
+                 int height, int channels) {
   return write_image(filename.c_str(), src, width, height, channels);
 }

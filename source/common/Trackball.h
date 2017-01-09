@@ -77,7 +77,6 @@ void axis_to_quat(float a[3], float phi, float q[4]);
 
 void quat_mult(float q1[4], float q2[4], float dest[4]);
 
-
 /*
  * Vector utility functions...
  */
@@ -94,16 +93,14 @@ void vadd(const float *src1, const float *src2, float *dst);
 
 /* matrix functions */
 void matinvert(float A[4][4]);
-void matmult(float *in,float *out,float mat[4][4]);
+void matmult(float *in, float *out, float mat[4][4]);
 void matident(float m[4][4]);
-void matxmat(float out[4][4],float m0[4][4],float m1[4][4]);
-void matcopy(float dst[4][4],float src[4][4]);
-void matprint(float a[4][4],char *s);
+void matxmat(float out[4][4], float m0[4][4], float m1[4][4]);
+void matcopy(float dst[4][4], float src[4][4]);
+void matprint(float a[4][4], char *s);
 
-float matadjoint(float r[4][4],float _data[4][4]);
+float matadjoint(float r[4][4], float _data[4][4]);
 void matinv4x4(float i[4][4]);
 void mattrans(float i[4][4]);
-
-
 
 #endif

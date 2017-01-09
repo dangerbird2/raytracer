@@ -1,3 +1,4 @@
+#include "../slsgl.h"
 
 #include "Angel.h"
 
@@ -25,8 +26,8 @@ static char *readShaderSource(const char *shaderFile) {
 }
 
 // Create a GLSL program object from vertex and fragment shader files
-GLuint InitShader(const char *vShaderFile, const char *fShaderFile, char const *uniform_header_file)
-{
+GLuint InitShader(const char *vShaderFile, const char *fShaderFile,
+                  char const *uniform_header_file) {
   struct Shader {
     const char *filename;
     GLenum type;
@@ -39,14 +40,11 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile, char const *
   // if no file is given, we use default string literal
   // for the source
   auto free_header = bool(uniform_header_file);
-  char const *uniform_src = uniform_header_file?
-      readShaderSource(uniform_header_file):
-                            default_header;
-
-
+  char const *uniform_src = uniform_header_file
+                                ? readShaderSource(uniform_header_file)
+                                : default_header;
 
   GLuint program = glCreateProgram();
-
 
   for (int i = 0; i < 2; ++i) {
     Shader &s = shaders[i];
@@ -59,7 +57,8 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile, char const *
     char const *sources[] = {uniform_src, s.source};
 
     GLuint shader = glCreateShader(s.type);
-    glShaderSource(shader, sizeof(sources)/ sizeof(char const *), sources, NULL);
+    glShaderSource(shader, sizeof(sources) / sizeof(char const *), sources,
+                   NULL);
     glCompileShader(shader);
 
     GLint compiled;
@@ -97,7 +96,6 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile, char const *
 
     exit(EXIT_FAILURE);
   }
-
 
   if (free_header) {
     // don't delete if it isn't read from file

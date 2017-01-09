@@ -11,5 +11,4 @@
 
 extern std::string source_path;
 
-
 #endif // __SHADER_H__

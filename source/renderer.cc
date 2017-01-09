@@ -1,17 +1,19 @@
 /**
  * @file ${FILE}
- * @brief 
+ * @brief
  * @license ${LICENSE}
  * Copyright (c) 11/20/15, Steven
- * 
+ *
  **/
 #include "renderer.h"
-#include "scene.h"
 #include "common-math.h"
+#include "scene.h"
+#include <cmath>
 
 namespace sls {
-CommandLineArgs parse_args(int argc, char const **argv)
-{
+
+using namespace ::std;
+CommandLineArgs parse_args(int argc, char const **argv) {
   using namespace std;
   assert(argc >= 0);
   auto args = CommandLineArgs();
@@ -27,12 +29,9 @@ CommandLineArgs parse_args(int argc, char const **argv)
   return args;
 }
 
-
 bool shadow_ray_unblocked(sls::Scene const &scene,
                           std::shared_ptr<sls::SceneObject> obj,
-                          vec4 const &light_pos,
-                          vec4 const &intersect_point)
-{
+                          vec4 const &light_pos, vec4 const &intersect_point) {
   auto dir = -light_pos;
   if (light_pos.w >= 0) {
     dir = -dir - intersect_point;
@@ -41,9 +40,8 @@ bool shadow_ray_unblocked(sls::Scene const &scene,
   dir.w = 0.0;
   dir = normalize(dir);
 
-
   auto shadow_ray = Ray{intersect_point, dir};
-  for (auto const &i: scene.objects) {
+  for (auto const &i : scene.objects) {
     auto can_shadow =
         ((i->target & sls::TargetRayTracer) == sls::TargetRayTracer);
 
@@ -57,17 +55,15 @@ bool shadow_ray_unblocked(sls::Scene const &scene,
   return true;
 }
 
-vec3 reflected_ray(sls::Scene scene,
-                   Angel::vec4 const &vec4,
-                   Angel::vec4 const &normal,
-                   Angel::vec4 const &intersect_pt)
-{
+vec3 reflected_ray(sls::Scene scene, Angel::vec4 const &vec4,
+                   Angel::vec4 const &normal, Angel::vec4 const &intersect_pt) {
   return vec3(0.0, 0.0, 0.0);
 }
 
-vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj, vec4 const &intersect_point,
-                            vec3 normal_sceneview, vec4 env_reflection, vec4 env_refraction)
-{
+vec4 shade_ray_intersection(Scene const &scene,
+                            std::shared_ptr<SceneObject> obj,
+                            vec4 const &intersect_point, vec3 normal_sceneview,
+                            vec4 env_reflection, vec4 env_refraction) {
   using namespace Angel;
 
   auto color = vec4(0.0, 0.0, 0.0, 1.0);
@@ -79,7 +75,6 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
   auto pos = xyz(intersect_point);
 
   auto normal = normalize(normal_sceneview);
-
 
   if (valid_reflection) { // simple local reflectance
     auto n_lights = scene.n_lights();
@@ -93,20 +88,17 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
         l_pos = normalize(xyz(scene.camera_modelview * light_location));
       } else {
         light_location.w = 1.0;
-        l_pos = normalize(xyz(scene.camera_modelview * light_location - intersect_point));
+        l_pos = normalize(
+            xyz(scene.camera_modelview * light_location - intersect_point));
       }
-
 
       auto ambient = mtl.ambient * mtl.k_ambient * l_color.ambient_color;
 
       auto l_dir = normalize(xyz(l_pos - xyz(intersect_point)));
       auto kd = fmax(dot(l_dir, normal), 0.0);
 
-      auto const unblocked =
-          shadow_ray_unblocked(scene,
-                               obj,
-                               vec4(l_dir, light_location.w), intersect_point);
-
+      auto const unblocked = shadow_ray_unblocked(
+          scene, obj, vec4(l_dir, light_location.w), intersect_point);
 
       auto diffuse = l_color.diffuse_color * mtl.color * mtl.k_diffuse * kd;
 
@@ -115,8 +107,8 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
         continue;
       }
       if (!unblocked || kd <= 0.0) {
-        //color += ambient;
-        //continue;
+        // color += ambient;
+        // continue;
         diffuse = vec4(0.0, 0.0, 0.0, 0.0);
       }
       auto eye = vec3(normalize(-xyz(intersect_point)));
@@ -131,12 +123,12 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
 
       auto specular = clamp(ks * (spec_product), 0.0, 1.0);
 
-      if (dot(l_pos, normal) < 0.0) { specular = vec4(0.0, 0.0, 0.0, 1.0); }
-
+      if (dot(l_pos, normal) < 0.0) {
+        specular = vec4(0.0, 0.0, 0.0, 1.0);
+      }
 
       color += (diffuse + ambient + specular);
     }
-
   }
 
   auto refraction = vec4(0.0, 0.0, 0.0, 0.0);
@@ -148,23 +140,22 @@ vec4 shade_ray_intersection(Scene const &scene, std::shared_ptr<SceneObject> obj
   color += refraction + reflective;
   color.w = mtl.color.w;
 
-
   return clamp(color, 0.0, 1.0);
 }
 
-Ray get_reflection_ray(vec3 const &intersection, vec3 const &incident, vec3 const &normal)
-{
+Ray get_reflection_ray(vec3 const &intersection, vec3 const &incident,
+                       vec3 const &normal) {
   return sls::Ray(vec4(intersection, 1.0),
                   -vec4(normalize(reflect(incident, normal)), 0.0));
 }
 
-Ray get_refraction_ray(vec3 intersection, vec3 const &incident, vec3 const &normal, float eta)
-{
+Ray get_refraction_ray(vec3 intersection, vec3 const &incident,
+                       vec3 const &normal, float eta) {
 
   auto res = Ray();
-  auto out_of_medium = dot(normalize(incident), normalize(normal)) > 0.0; // ray is acute to outer normal
+  auto out_of_medium = dot(normalize(incident), normalize(normal)) >
+                       0.0; // ray is acute to outer normal
   const auto max_depth = 3;
-
 
   vec3 refraction_dir = normalize(refract(incident, normal, eta));
   res = Ray(vec4(intersection, 1.0), vec4(refraction_dir, 0.0));
@@ -174,11 +165,6 @@ Ray get_refraction_ray(vec3 intersection, vec3 const &incident, vec3 const &norm
     return res;
   }
 
-
-
   return res;
 }
-
 }
-
-

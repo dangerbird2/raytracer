@@ -1,19 +1,22 @@
 /**
  * @file ${FILE}
- * @brief 
+ * @brief
  * @license ${LICENSE}
  * Copyright (c) 12/5/15, Steven
- * 
+ *
  **/
 #ifndef RAYTRACER_SCENE_H
 #define RAYTRACER_SCENE_H
 
+#include "slsgl.h"
+#include "slsgl.h"
+
+#include "common-math.h"
+#include "common/Angel.h"
+#include "common/ObjMesh.h"
 #include "types.h"
 #include <memory>
 #include <vector>
-#include "common/Angel.h"
-#include "common/ObjMesh.h"
-#include "common-math.h"
 
 namespace sls {
 
@@ -24,7 +27,6 @@ enum RenderTarget {
   TargetDefault = TargetOpenGL | TargetRayTracer
 };
 
-
 struct GLMesh final {
   Mesh mesh;
   GLuint ibo;
@@ -34,36 +36,29 @@ struct GLMesh final {
 
   bool initialized;
 
-  GLMesh(Mesh const &mesh, GLuint ibo, GLuint vbo, GLuint vao) : mesh(mesh), ibo(ibo), vbo(vbo), vao(vao),
-                                                                 initialized(false) { }
+  GLMesh(Mesh const &mesh, GLuint ibo, GLuint vbo, GLuint vao)
+      : mesh(mesh), ibo(ibo), vbo(vbo), vao(vao), initialized(false) {}
 
-
-  GLMesh(Mesh const &mesh = {}) : mesh(mesh), initialized(false)
-  {
+  GLMesh(Mesh const &mesh = {}) : mesh(mesh), initialized(false) {
     constexpr auto n = 2;
     GLuint buffers[n] = {};
     glGenBuffers(n, buffers);
     ibo = buffers[0];
     vbo = buffers[1];
     glGenVertexArraysAPPLE(1, &vao);
-
-
   }
 
   GLMesh(GLMesh &cpy) = delete;
 
-  virtual ~GLMesh()
-  {
+  virtual ~GLMesh() {
     constexpr auto n = 2;
     GLuint buffers[n] = {ibo, vbo};
     glDeleteBuffers(n, buffers);
   }
 
-
-  void initialize_buffers(GLuint vert_position, GLuint vert_normal, GLuint vert_texcoord)
-  {
+  void initialize_buffers(GLuint vert_position, GLuint vert_normal,
+                          GLuint vert_texcoord) {
     glBindVertexArrayAPPLE(vao);
-
 
     glEnableVertexAttribArray(vert_position);
 
@@ -75,8 +70,8 @@ struct GLMesh final {
     auto normals_bytes = mesh.normals.size() * sizeof(vec3);
     auto uv_bytes = mesh.uvs.size() * sizeof(vec2);
 
-    glBufferData(GL_ARRAY_BUFFER, vertices_bytes + normals_bytes + uv_bytes, NULL,
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices_bytes + normals_bytes + uv_bytes,
+                 NULL, GL_STATIC_DRAW);
     unsigned int offset = 0;
     glBufferSubData(GL_ARRAY_BUFFER, offset, vertices_bytes, &mesh.vertices[0]);
     offset += vertices_bytes;
@@ -86,17 +81,14 @@ struct GLMesh final {
 
     initialized = true;
     glBindVertexArrayAPPLE(0);
-
   }
 
-
-
-  void draw(GLuint vert_position, GLuint vert_normal, GLuint vert_texcoord)
-  {
+  void draw(GLuint vert_position, GLuint vert_normal, GLuint vert_texcoord) {
     if (initialized & 0) {
       glBindVertexArrayAPPLE(vao);
       glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      glVertexAttribPointer(vert_position, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+      glVertexAttribPointer(vert_position, 4, GL_FLOAT, GL_FALSE, 0,
+                            BUFFER_OFFSET(0));
       glVertexAttribPointer(vert_normal, 3, GL_FLOAT, GL_FALSE, 0,
                             BUFFER_OFFSET(mesh.vertices.size() * sizeof(vec4)));
       glVertexAttribPointer(vert_texcoord, 2, GL_FLOAT, GL_FALSE, 0,
@@ -104,19 +96,13 @@ struct GLMesh final {
                                           mesh.normals.size() * sizeof(vec3)));
 
       glPointSize(5);
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei >(mesh.vertices.size()));
+      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh.vertices.size()));
       glBindVertexArrayAPPLE(0);
-
     }
-
-
   }
-
 };
 
-struct GLPackedMesh final {
-
-};
+struct GLPackedMesh final {};
 
 /**
  * @brief Object for rendering in Ray tracer
@@ -126,7 +112,7 @@ struct GLPackedMesh final {
 struct SceneObject {
 
 public:
-//---------------------------------fields---------------------------------------
+  //---------------------------------fields---------------------------------------
   Material material;
   std::shared_ptr<GLMesh> mesh;
 
@@ -138,20 +124,15 @@ public:
               Angel::mat4 const &model_view = Angel::mat4(),
               std::shared_ptr<GLMesh> mesh = nullptr,
               RenderTarget target = TargetDefault)
-      : material(mtl), mesh(mesh), target(target)
-  {
+      : material(mtl), mesh(mesh), target(target) {
     set_modelview(model_view);
-
   }
 
-  SceneObject(SceneObject const &cpy) :
-      SceneObject(cpy.material, cpy.modelview_, cpy.mesh) { }
-
+  SceneObject(SceneObject const &cpy)
+      : SceneObject(cpy.material, cpy.modelview_, cpy.mesh) {}
 
   //---------------------------------methods---------------------------------------
-  virtual
-  ~SceneObject() { }
-
+  virtual ~SceneObject() {}
 
   virtual Intersection intersect(Ray const &ray) const = 0;
 
@@ -161,15 +142,15 @@ public:
 
   virtual vec3 surface_normal(vec3 const &point) const = 0;
 
-  virtual bool inside_ray(Ray const &ray) const
-  {
+  virtual bool inside_ray(Ray const &ray) const {
 
     using namespace Angel;
 
     if (inside(xyz(ray.start))) {
       return true;
     } else {
-      auto facing_normal = dot(xyz(ray.dir), surface_normal(xyz(ray.start))) > 0;
+      auto facing_normal =
+          dot(xyz(ray.dir), surface_normal(xyz(ray.start))) > 0;
       return facing_normal;
     }
   };
@@ -177,14 +158,10 @@ public:
   /**
    * @brief return intersection distance only
    */
-  virtual double intersect_t(Ray const &ray) const
-  {
+  virtual double intersect_t(Ray const &ray) const { return intersect(ray).t; }
 
-    return intersect(ray).t;
-  }
-
-
-  //---------------------------------matrix accessors---------------------------------------
+  //---------------------------------matrix
+  //accessors---------------------------------------
 
   mat4 const &modelview() const;
 
@@ -198,7 +175,6 @@ private:
   Angel::mat4 modelview_;
   Angel::mat4 modelview_inverse_;
   Angel::mat4 normalview_;
-
 };
 
 struct LightColor {
@@ -206,7 +182,6 @@ struct LightColor {
   Angel::vec4 diffuse_color = vec4(0.01, 0.01, 0.01, 1.0);
   Angel::vec4 specular_color = vec4(1.0, 1.0, 1.0, 1.0);
 };
-
 
 struct Scene {
 
@@ -217,35 +192,25 @@ struct Scene {
 
   std::vector<std::shared_ptr<SceneObject>> objects;
 
-  float space_k_refraction = 1.000293;  // air
+  float space_k_refraction = 1.000293; // air
 
-  size_t n_lights() const
-  {
+  size_t n_lights() const {
     return std::min(light_colors.size(), light_locations.size());
   }
-
 };
 
 struct UnitSphere : public SceneObject {
 
-  UnitSphere(Material const &mtl,
-             Angel::mat4 modelview = Angel::mat4(), std::shared_ptr<GLMesh> mesh = nullptr) :
-      SceneObject(mtl,
-                  modelview,
-                  mesh,
-                  TargetDefault) { }
+  UnitSphere(Material const &mtl, Angel::mat4 modelview = Angel::mat4(),
+             std::shared_ptr<GLMesh> mesh = nullptr)
+      : SceneObject(mtl, modelview, mesh, TargetDefault) {}
 
-  UnitSphere(UnitSphere const &cpy) :
-      UnitSphere(cpy.material,
-                 cpy.modelview(),
-                 cpy.mesh)
-  {
+  UnitSphere(UnitSphere const &cpy)
+      : UnitSphere(cpy.material, cpy.modelview(), cpy.mesh) {
     radius = cpy.radius;
   }
 
-
-  UnitSphere &operator=(UnitSphere const &cpy)
-  {
+  UnitSphere &operator=(UnitSphere const &cpy) {
     UnitSphere tmp(cpy);
     *this = std::move(tmp);
     return *this;
@@ -257,11 +222,9 @@ struct UnitSphere : public SceneObject {
 
   Intersection intersect(Ray const &ray) const override;
 
-
   virtual bool on_surface(vec3 const &point) const override;
 
   virtual bool inside(vec3 const &point) const override;
-
 
   virtual vec3 surface_normal(vec3 const &point) const override;
 };
@@ -271,14 +234,11 @@ struct UnitSphere : public SceneObject {
  */
 struct Plane : public SceneObject {
 
-  Plane(Material const &mtl, Angel::mat4 modelview = Angel::mat4(), std::shared_ptr<GLMesh> mesh = nullptr) :
-      SceneObject(mtl,
-                  modelview,
-                  mesh) { }
+  Plane(Material const &mtl, Angel::mat4 modelview = Angel::mat4(),
+        std::shared_ptr<GLMesh> mesh = nullptr)
+      : SceneObject(mtl, modelview, mesh) {}
 
   Intersection intersect(Ray const &ray) const override;
 };
-
-
 }
-#endif //RAYTRACER_SCENE_H
+#endif // RAYTRACER_SCENE_H
