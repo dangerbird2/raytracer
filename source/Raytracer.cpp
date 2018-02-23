@@ -39,6 +39,8 @@ struct RTConfig {
   bool use_window_size = false;
 };
 
+static GLFWwindow *WINDOW;
+
 void setup_scene(vec4 const &material_diffuse, vec4 const &material_ambient,
                  vec4 const &material_specular);
 
@@ -364,7 +366,7 @@ void rayTrace(size_t max_samples = 1, RTConfig cf = RTConfig()) {
 
     for (auto &unit : work_units) {
       results.push_back(raycast_async(
-          [](auto &i) {
+          [&](auto &i) {
             i.color =
                 castRay(i.rays.start, i.rays.dir, 0, max_rt_depth, nullptr);
             return i;
@@ -546,7 +548,6 @@ void init() {
 
   glEnable(GL_DEPTH_TEST);
 
-  glShadeModel(GL_SMOOTH);
 
   glClearColor(0.8, 0.8, 1.0, 1.0);
 
@@ -687,7 +688,7 @@ void display(void) {
   auto n_lights = int(std::min(scene.n_lights(), max_lights));
 
   glUniform4fv(light_unifs.light_locations, n_lights,
-               reinterpret_cast<float const *>(&scene.light_locations[0]));
+               &scene.light_locations[0].x);
   glUniform1i(light_unifs.n_lights, n_lights);
 
   for (auto const &obj : scene.objects) {
@@ -735,26 +736,26 @@ void display(void) {
     }
   }
 
-  glutSwapBuffers();
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-void mouse(GLint button, GLint state, GLint x, GLint y) {
-
+void mouse(GLFWwindow *window, int button, int action, int mods) {
+  double x, y;
+  glfwGetCursorPos(window, &x, &y);
   if (!rt_flags.is_raytracing) {
-    if (state == GLUT_UP) {
+    if (button == GLFW_PRESS) {
       moving = scaling = panning = 0;
       std::cout << x << "\t\t" << y << "\n";
       auto ray = findRay(x, y, window_width, window_height);
       castRayDebug(ray.start, ray.dir);
-      glutPostRedisplay();
       return;
     }
-
-    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+    bool shift_on = mods & GLFW_MOD_SHIFT;
+    bool alt_on = mods & GLFW_MOD_ALT;
+    if (shift_on) {
       scaling = 1;
-    } else if (glutGetModifiers() & GLUT_ACTIVE_ALT) {
+    } else if (alt_on) {
       panning = 1;
     } else {
       moving = 1;
@@ -765,18 +766,20 @@ void mouse(GLint button, GLint state, GLint x, GLint y) {
     beginy = y;
   }
 
-  glutPostRedisplay();
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-void motion(GLint x, GLint y) {
+void motion(GLFWwindow *window, double xpos, double ypos) {
+  auto x = int(xpos);
+  auto y = int(ypos);
+  int W = 0;
+  int H = 0;
 
-  int W = glutGet(GLUT_WINDOW_WIDTH);
-  int H = glutGet(GLUT_WINDOW_HEIGHT);
+  glfwGetWindowSize(window, &W, &H);
 
-  float dx = (beginx - x) / (float)W;
-  float dy = (y - beginy) / (float)H;
+  float dx = (beginx - x) / float(W);
+  float dy = (y - beginy) / float(H);
 
   if (panning) {
     ortho_x += dx;
@@ -784,14 +787,12 @@ void motion(GLint x, GLint y) {
 
     beginx = x;
     beginy = y;
-    glutPostRedisplay();
     return;
   } else if (scaling) {
     scalefactor *= (1.0f + dx);
 
     beginx = x;
     beginy = y;
-    glutPostRedisplay();
     return;
   } else if (moving) {
     trackball(lastquat, (2.0f * beginx - W) / W, (H - 2.0f * beginy) / H,
@@ -802,7 +803,6 @@ void motion(GLint x, GLint y) {
 
     beginx = x;
     beginy = y;
-    glutPostRedisplay();
     return;
   }
 }
@@ -883,7 +883,7 @@ void keyboard(unsigned char key, int x, int y) {
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-void reshape(int width, int height) {
+void reshape(GLFWwindow *window, int width, int height) {
   window_height = height;
   window_width = width;
 
@@ -898,8 +898,6 @@ void reshape(int width, int height) {
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 void timer(int value) {
-  glutTimerFunc(33, timer, 1);
-  glutPostRedisplay();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -917,27 +915,52 @@ int main(int argc, char **argv) {
     out_file_name = "output.png";
   }
 
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-  glutInitWindowSize(512, 512);
-  glutCreateWindow("Raytracer");
+  if(!glfwInit())
+  {
+    std::cerr << "Failed to initialize GLFW context" << std::endl;
 
-  // setup GLEW
-  glewExperimental = GL_TRUE;
-  auto glew = glewInit();
-  if (GLEW_OK != glew) {
-    fprintf(stderr, "Glew initialization failed! code %x, %s\n", glew, glewGetErrorString(glew));
+    exit(EXIT_FAILURE);
+  }
+  atexit([]()
+  {
+    char c;
+#ifdef _WIN32
+    std::cout << "press a button" << std::endl;
+    std::cin >> c;
+#endif
+    glfwTerminate();
+  });
+
+  
+  
+  WINDOW = glfwCreateWindow(800, 600, "raytracer", nullptr, nullptr);
+  glfwMakeContextCurrent(WINDOW);
+  if(!WINDOW)
+  {
+    std::cerr << "could not create window" << std::endl;
+  }
+  if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
+  {
+    std::cerr << "Failed to initialize GLAD context" << std::endl;
+    exit(EXIT_FAILURE);
   }
 
   init();
-  glutDisplayFunc(display);
-  glutKeyboardFunc(keyboard);
-  glutReshapeFunc(reshape);
-  glutMouseFunc(mouse);
-  glutMotionFunc(motion);
 
-  timer(1);
+  glfwSetWindowSizeCallback(WINDOW, reshape);
+  glfwSetMouseButtonCallback(WINDOW, mouse);
+  glfwSetCursorPosCallback(WINDOW, motion);
 
-  glutMainLoop();
+  while(!glfwWindowShouldClose(WINDOW))
+  {
+    glfwPollEvents();
+    display();
+    glfwSwapBuffers(WINDOW);
+  }
+
+  glfwDestroyWindow(WINDOW);
+
+  
+
   return 0;
 }

@@ -14,7 +14,13 @@
 
 # see http://code.google.com/p/gamekit/source/browse/trunk/Dependencies/Source/FreeImage/CMakeLists.txt?r=647
 
-SET(CMAKE_CXX_FLAGS "-Wno-deprecated")
+# SET(CMAKE_CXX_FLAGS "-Wno-deprecated")
+
+if(UNIX)
+  SET(CMAKE_CXX_FLAGS "-std=gnu++1y -Wno-deprecated")
+elseif(WIN32)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 
 set(FREEIMAGE_INCLUDE_DIRECTORIES

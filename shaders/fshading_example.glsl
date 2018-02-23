@@ -1,4 +1,3 @@
-
 #ifndef SLS_MAX_LIGHTS
 #define SLS_MAX_LIGHTS 8
 #endif //
@@ -20,10 +19,11 @@ uniform int n_lights;
 
 uniform mat4 ModelViewLight;
 
-varying vec3 pos;
-varying vec3 N;
-varying vec2 texCoord;
+in vec3 pos;
+in vec3 N;
+in vec2 texCoord;
 
+out vec4 out_color;
 
 
 void main()
@@ -76,10 +76,10 @@ void main()
   }
 
   
-  gl_FragColor = color_sum;
-  gl_FragColor = color_sum;
-  gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-  gl_FragColor.a = DiffuseProducts[0].w;
+  out_color = color_sum;
+  out_color = color_sum;
+  out_color = clamp(gl_FragColor, 0.0, 1.0);
+  out_color.a = DiffuseProducts[0].w;
   
 }
 

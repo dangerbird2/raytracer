@@ -1,6 +1,7 @@
 #include "../slsgl.h"
 
 #include "Angel.h"
+#include <cstring>
 
 namespace Angel {
 
@@ -11,12 +12,15 @@ static char *readShaderSource(const char *shaderFile) {
   if (fp == NULL) {
     return NULL;
   }
+  long size = ftell(fp);
 
   fseek(fp, 0L, SEEK_END);
-  long size = ftell(fp);
+  size = ftell(fp) - size;
 
   fseek(fp, 0L, SEEK_SET);
   char *buf = new char[size + 1];
+  memset(buf, 0, size + 1);
+  
   fread(buf, 1, size, fp);
 
   buf[size] = '\0';
@@ -35,7 +39,11 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile,
   } shaders[2] = {{vShaderFile, GL_VERTEX_SHADER, NULL},
                   {fShaderFile, GL_FRAGMENT_SHADER, NULL}};
 
-  char const *default_header = "#define SLS_MAX_LIGHTS 8\n";
+  char const *default_header = R"GLSL(#version 410
+#line 0 0
+#define SLS_MAX_LIGHTS 8
+#line 0 1
+  )GLSL";
 
   // if no file is given, we use default string literal
   // for the source
@@ -64,12 +72,16 @@ GLuint InitShader(const char *vShaderFile, const char *fShaderFile,
     GLint compiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
     if (!compiled) {
-      std::cerr << s.filename << " failed to compile:" << std::endl;
+      auto shader_type = s.type == GL_FRAGMENT_SHADER ?
+        "GL_FRAGMENT_SHADER" :
+        "GL_VERTEX_SHADER";
+      std::cerr << s.filename << " failed to compile: " << shader_type << std::endl;
       GLint logSize;
       glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
       char *logMsg = new char[logSize];
       glGetShaderInfoLog(shader, logSize, NULL, logMsg);
       std::cerr << logMsg << std::endl;
+      std::cerr << uniform_src << std::endl << s.source << std::endl;
       delete[] logMsg;
 
       exit(EXIT_FAILURE);

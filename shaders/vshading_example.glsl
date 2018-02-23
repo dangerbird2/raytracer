@@ -1,17 +1,18 @@
+/**
+vertex shader shader 
+*/
 
-attribute  vec4 vPosition;
-attribute  vec3 vNormal;
-attribute  vec2 vTexCoord;
+in vec4 vPosition;
+in vec3 vNormal;
+in vec2 vTexCoord;
 
 uniform mat4 ModelViewEarth;
 uniform mat4 Projection;
 uniform mat4 NormalMatrix;
 
-varying vec3 pos;
-varying vec3 N;
-varying vec2 texCoord;
-
-//TODO multiple lighting
+out vec3 pos;
+out vec3 N;
+out vec2 texCoord;
 
 uniform vec4 AmbientProducts[SLS_MAX_LIGHTS];
 uniform vec4 DiffuseProducts[SLS_MAX_LIGHTS];

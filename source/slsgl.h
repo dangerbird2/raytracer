@@ -5,7 +5,9 @@
 #ifndef RAYTRACER_SLSGL_H
 #define RAYTRACER_SLSGL_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <GLAD/glad.h>
+#include <GL/GLU.h>
+
+#include <GLFW/glfw3.h>
 
 #endif //RAYTRACER_SLSGL_H

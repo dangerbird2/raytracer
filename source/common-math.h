@@ -21,8 +21,8 @@ namespace sls {
 //---------------------------------floating point near
 //functions---------------------------------------
 
-template <typename T_REAL>
-static bool near(const T_REAL &a, const T_REAL &b, const T_REAL &epsilon) {
+template <class T_REAL>
+bool nearlyEquals(T_REAL a, T_REAL b, T_REAL epsilon) {
   const T_REAL absA = fabs(a);
   const T_REAL absB = fabs(b);
   const T_REAL diff = fabs(a - b);
